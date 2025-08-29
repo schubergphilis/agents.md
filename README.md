@@ -4,6 +4,10 @@ A community catalog of AGENTS.md files that capture the Schuberg way of working.
 
 AGENTS.md is intended to be read by coding agents and humans alike. Keep it precise, testable, and unambiguous.
 
+## TO DO: ##
+- Update the template to include a section on how the agent should work e.g. "always write tests first" or "always create a plan".
+- Add seperate documentation, perhaps even automation on how to use these agents.md files with different tools.
+- Is something like this relevant: https://github.com/intellectronica/ruler
 --------------------------------------------------------------------------------
 
 🎯 Repository goals
