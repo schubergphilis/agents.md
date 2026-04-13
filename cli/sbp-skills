@@ -138,6 +138,60 @@ def extract_fragment_ids(content: str) -> list[str]:
     return ids
 
 
+# ---------------------------------------------------------------------------
+# Detection
+# ---------------------------------------------------------------------------
+
+TOOL_DIRS = {
+    "claude-code": {
+        "marker": ".claude",
+        "skills_dir": ".claude/skills",
+        "commands_dir": ".claude/commands",
+        "agent_file": "CLAUDE.md",
+    },
+    "copilot": {
+        "marker": ".copilot",
+        "skills_dir": None,
+        "commands_dir": None,
+        "agent_file": ".github/copilot-instructions.md",
+    },
+    "opencode": {
+        "marker": ".config/opencode",
+        "skills_dir": ".config/opencode/skills",
+        "commands_dir": None,
+        "agent_file": None,
+    },
+}
+
+
+def detect_tools(home: Path) -> dict:
+    """Detect installed AI coding tools by checking for config directories."""
+    found = {}
+    for tool_name, info in TOOL_DIRS.items():
+        marker = home / info["marker"]
+        if marker.is_dir():
+            found[tool_name] = {
+                "skills_dir": home / info["skills_dir"] if info["skills_dir"] else None,
+                "commands_dir": home / info["commands_dir"] if info["commands_dir"] else None,
+                "agent_file": info["agent_file"],
+            }
+    return found
+
+
+def detect_stack(project_dir: Path, detection_rules: dict) -> set[str]:
+    """Detect which packs apply to a project based on file patterns."""
+    detected = set()
+    for name, rule in detection_rules.items():
+        for pattern in rule["files"]:
+            matches = list(project_dir.glob(pattern))
+            if matches:
+                detected.add(rule["pack"])
+                for dep in rule.get("depends", []):
+                    detected.add(dep)
+                break
+    return detected
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="sbp-skills",
