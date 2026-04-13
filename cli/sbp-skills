@@ -2,9 +2,140 @@
 """sbp-skills — Mission-critical cognitive autonomy for SBP engineering teams."""
 
 import argparse
+import json
 import sys
+import tomllib
+from datetime import datetime, timezone
+from pathlib import Path
 
 __version__ = "0.1.0"
+
+
+# ---------------------------------------------------------------------------
+# Configuration & TOML parsing
+# ---------------------------------------------------------------------------
+
+def parse_detection_toml(path: Path) -> dict:
+    """Parse detection.toml into {name: {files: [...], pack: str, depends: [...]}}."""
+    with open(path, "rb") as f:
+        raw = tomllib.load(f)
+    result = {}
+    for name, section in raw.items():
+        result[name] = {
+            "files": section.get("files", []),
+            "pack": section.get("pack", name),
+            "depends": section.get("depends", []),
+        }
+    return result
+
+
+def parse_defaults_toml(path: Path) -> dict:
+    """Parse defaults.toml into {skills: [...], commands: [...]}."""
+    with open(path, "rb") as f:
+        raw = tomllib.load(f)
+    return {
+        "skills": raw.get("skills", {}).get("default", []),
+        "commands": raw.get("commands", {}).get("default", []),
+    }
+
+
+def parse_pack_manifest(path: Path) -> dict:
+    """Parse a pack's manifest.toml into a flat dict."""
+    with open(path, "rb") as f:
+        raw = tomllib.load(f)
+    pack = raw.get("pack", {})
+    detect = raw.get("detect", {})
+    targets = raw.get("targets", {})
+    return {
+        "name": pack.get("name", ""),
+        "description": pack.get("description", ""),
+        "version": pack.get("version", "0.0.0"),
+        "authors": pack.get("authors", []),
+        "detect_files": detect.get("files", []),
+        "targets": {
+            "agents_md": targets.get("agents_md", False),
+            "claude_md": targets.get("claude_md", False),
+            "commands": targets.get("commands", False),
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# Fragment merging
+# ---------------------------------------------------------------------------
+
+def insert_fragment(content: str, fragment_id: str, fragment_body: str) -> str:
+    """Insert or replace a fragment in content. Preserves LOCAL sections."""
+    begin_marker = f"<!-- BEGIN {fragment_id} -->"
+    end_marker = f"<!-- END {fragment_id} -->"
+    new_block = f"{begin_marker}\n{fragment_body.rstrip()}\n{end_marker}\n"
+
+    if begin_marker in content:
+        # Replace existing fragment
+        lines = content.split("\n")
+        result = []
+        skipping = False
+        replaced = False
+        for line in lines:
+            if line.strip() == begin_marker:
+                skipping = True
+                if not replaced:
+                    result.append(new_block.rstrip())
+                    replaced = True
+                continue
+            if skipping and line.strip() == end_marker:
+                skipping = False
+                continue
+            if not skipping:
+                result.append(line)
+        return "\n".join(result) + "\n" if not content.endswith("\n") else "\n".join(result)
+    else:
+        # Append before LOCAL section if it exists, otherwise append at end
+        local_marker = "<!-- LOCAL -->"
+        if local_marker in content:
+            idx = content.index(local_marker)
+            return content[:idx] + new_block + "\n" + content[idx:]
+        else:
+            separator = "\n" if content and not content.endswith("\n") else ""
+            return content + separator + new_block
+
+
+def remove_fragment(content: str, fragment_id: str) -> str:
+    """Remove a fragment from content."""
+    begin_marker = f"<!-- BEGIN {fragment_id} -->"
+    end_marker = f"<!-- END {fragment_id} -->"
+
+    if begin_marker not in content:
+        return content
+
+    lines = content.split("\n")
+    result = []
+    skipping = False
+    for line in lines:
+        if line.strip() == begin_marker:
+            skipping = True
+            continue
+        if skipping and line.strip() == end_marker:
+            skipping = False
+            continue
+        if not skipping:
+            result.append(line)
+
+    cleaned = "\n".join(result)
+    while "\n\n\n" in cleaned:
+        cleaned = cleaned.replace("\n\n\n", "\n\n")
+    return cleaned
+
+
+def extract_fragment_ids(content: str) -> list[str]:
+    """Extract all fragment IDs from content in order."""
+    ids = []
+    for line in content.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("<!-- BEGIN ") and stripped.endswith(" -->"):
+            fid = stripped[len("<!-- BEGIN "):-len(" -->")]
+            ids.append(fid)
+    return ids
 
 
 def main():
