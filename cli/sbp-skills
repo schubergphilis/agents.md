@@ -3,6 +3,7 @@
 
 import argparse
 import json
+import re
 import sys
 import tomllib
 from datetime import datetime, timezone
@@ -228,6 +229,89 @@ def load_manifest(project_dir: Path) -> dict | None:
         return None
     with open(path) as f:
         return json.load(f)
+
+
+# ---------------------------------------------------------------------------
+# SKILL.md parsing
+# ---------------------------------------------------------------------------
+
+def _parse_frontmatter(text: str) -> dict:
+    """Parse simple YAML-like frontmatter (flat keys + one nested dict level). Stdlib only."""
+    result = {}
+    current_key = None
+    current_dict = None
+    current_scalar_lines = None
+
+    for line in text.split("\n"):
+        if not line.strip() or line.strip().startswith("#"):
+            continue
+
+        # Indented line — either nested dict entry or continuation of a scalar
+        if line.startswith("  ") or line.startswith("\t"):
+            stripped = line.strip()
+            # Check if it's a key: value pair (nested dict)
+            kv_match = re.match(r"^([\w][\w-]*):\s+(.*)", stripped)
+            if kv_match and current_key and current_dict is not None:
+                current_dict[kv_match.group(1)] = kv_match.group(2).strip().strip("'\"")
+            elif current_scalar_lines is not None:
+                # Continuation of a multi-line scalar
+                current_scalar_lines.append(stripped)
+            continue
+
+        # Top-level key
+        top_match = re.match(r"^([\w][\w-]*):\s*(.*)", line)
+        if top_match:
+            # Finalize previous key
+            if current_key and current_dict is not None:
+                result[current_key] = current_dict
+            elif current_key and current_scalar_lines is not None:
+                result[current_key] = " ".join(current_scalar_lines)
+
+            key = top_match.group(1)
+            value = top_match.group(2).strip()
+
+            if not value:
+                # Start of a nested dict
+                current_key = key
+                current_dict = {}
+                current_scalar_lines = None
+            else:
+                # Scalar value (might have continuations)
+                current_key = key
+                current_dict = None
+                current_scalar_lines = [value.strip("'\"")]
+
+    # Finalize last key
+    if current_key and current_dict is not None:
+        result[current_key] = current_dict
+    elif current_key and current_scalar_lines is not None:
+        result[current_key] = " ".join(current_scalar_lines)
+
+    return result
+
+
+def parse_skill_md(content: str) -> dict | None:
+    """Parse a SKILL.md file with YAML frontmatter and markdown body."""
+    if not content.strip().startswith("---"):
+        return None
+
+    parts = content.split("---", 2)
+    if len(parts) < 3:
+        return None
+
+    frontmatter_text = parts[1].strip()
+    body = parts[2].strip()
+
+    fm = _parse_frontmatter(frontmatter_text)
+    if not fm.get("name"):
+        return None
+
+    return {
+        "name": fm["name"],
+        "description": fm.get("description", ""),
+        "metadata": fm.get("metadata", {}),
+        "body": body,
+    }
 
 
 def main():
