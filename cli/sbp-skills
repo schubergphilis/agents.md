@@ -192,6 +192,44 @@ def detect_stack(project_dir: Path, detection_rules: dict) -> set[str]:
     return detected
 
 
+# ---------------------------------------------------------------------------
+# Manifest tracking
+# ---------------------------------------------------------------------------
+
+def create_manifest(central_repo: str, tools: list, baseline_version: str,
+                    packs: dict, skills: dict) -> dict:
+    """Create a new manifest dict."""
+    return {
+        "version": "1",
+        "last_update": datetime.now(timezone.utc).isoformat(),
+        "central_repo": central_repo,
+        "tools_detected": tools,
+        "baseline": {"version": baseline_version},
+        "packs": packs,
+        "skills": skills,
+        "removed": [],
+    }
+
+
+def save_manifest(project_dir: Path, manifest: dict) -> None:
+    """Write manifest to .sbp/manifest.json."""
+    sbp_dir = project_dir / ".sbp"
+    sbp_dir.mkdir(exist_ok=True)
+    manifest["last_update"] = datetime.now(timezone.utc).isoformat()
+    with open(sbp_dir / "manifest.json", "w") as f:
+        json.dump(manifest, f, indent=2)
+        f.write("\n")
+
+
+def load_manifest(project_dir: Path) -> dict | None:
+    """Load manifest from .sbp/manifest.json, or None if missing."""
+    path = project_dir / ".sbp" / "manifest.json"
+    if not path.exists():
+        return None
+    with open(path) as f:
+        return json.load(f)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="sbp-skills",
