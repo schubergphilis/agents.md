@@ -3,7 +3,9 @@
 
 import argparse
 import json
+import os
 import re
+import shutil
 import sys
 import tomllib
 from datetime import datetime, timezone
@@ -314,6 +316,115 @@ def parse_skill_md(content: str) -> dict | None:
     }
 
 
+# ---------------------------------------------------------------------------
+# Rendering — assemble fragments into project files
+# ---------------------------------------------------------------------------
+
+def _extract_body(content: str) -> str:
+    """Extract body between BEGIN/END markers, or return full content if no markers."""
+    lines = content.split("\n")
+    body_lines = []
+    in_body = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("<!-- BEGIN "):
+            in_body = True
+            continue
+        if stripped.startswith("<!-- END "):
+            in_body = False
+            continue
+        if in_body:
+            body_lines.append(line)
+    return "\n".join(body_lines) if body_lines else content
+
+
+def render_agents_md(project_dir: Path, repo_root: Path, detected_packs: set) -> None:
+    """Render AGENTS.md with baseline + detected pack fragments."""
+    agents_path = project_dir / "AGENTS.md"
+    content = agents_path.read_text() if agents_path.exists() else ""
+
+    # Insert baseline
+    baseline = (repo_root / "baseline" / "AGENTS.md").read_text()
+    baseline_body = _extract_body(baseline)
+    content = insert_fragment(content, "baseline", baseline_body)
+
+    # Insert detected pack fragments
+    for pack_name in sorted(detected_packs):
+        pack_agents = repo_root / "packs" / pack_name / "AGENTS.md"
+        if pack_agents.exists():
+            pack_body = _extract_body(pack_agents.read_text())
+            content = insert_fragment(content, f"pack: {pack_name}", pack_body)
+
+    # Remove pack fragments no longer detected
+    existing_ids = extract_fragment_ids(content)
+    for fid in existing_ids:
+        if fid.startswith("pack: "):
+            pack_name = fid[len("pack: "):]
+            if pack_name not in detected_packs:
+                content = remove_fragment(content, fid)
+
+    agents_path.write_text(content)
+
+
+def render_claude_md(project_dir: Path, repo_root: Path, detected_packs: set) -> None:
+    """Render CLAUDE.md with baseline + detected pack fragments (if they have CLAUDE.md)."""
+    claude_path = project_dir / "CLAUDE.md"
+    content = claude_path.read_text() if claude_path.exists() else ""
+
+    baseline_claude = repo_root / "baseline" / "CLAUDE.md"
+    if baseline_claude.exists():
+        baseline_body = _extract_body(baseline_claude.read_text())
+        content = insert_fragment(content, "baseline", baseline_body)
+
+    for pack_name in sorted(detected_packs):
+        pack_claude = repo_root / "packs" / pack_name / "CLAUDE.md"
+        if pack_claude.exists():
+            pack_body = _extract_body(pack_claude.read_text())
+            content = insert_fragment(content, f"pack: {pack_name}", pack_body)
+
+    claude_path.write_text(content)
+
+
+def copy_commands(project_dir: Path, repo_root: Path, defaults: list,
+                  detected_packs: set) -> None:
+    """Copy default and pack commands to .claude/commands/."""
+    commands_dir = project_dir / ".claude" / "commands"
+    commands_dir.mkdir(parents=True, exist_ok=True)
+
+    for cmd_name in defaults:
+        src = repo_root / "baseline" / "commands" / f"{cmd_name}.md"
+        if src.exists():
+            shutil.copy2(src, commands_dir / f"{cmd_name}.md")
+
+    for pack_name in sorted(detected_packs):
+        pack_cmds = repo_root / "packs" / pack_name / "commands"
+        if pack_cmds.is_dir():
+            for cmd_file in pack_cmds.glob("*.md"):
+                shutil.copy2(cmd_file, commands_dir / cmd_file.name)
+
+
+def link_skills(home: Path, repo_root: Path, skills: list, tool: str) -> None:
+    """Symlink skills to the tool's skills directory."""
+    tool_info = TOOL_DIRS.get(tool, {})
+    skills_rel = tool_info.get("skills_dir")
+    if not skills_rel:
+        return
+
+    skills_dir = home / skills_rel
+    skills_dir.mkdir(parents=True, exist_ok=True)
+
+    for skill_name in skills:
+        src = repo_root / "skills" / skill_name
+        dst = skills_dir / skill_name
+        if src.is_dir():
+            if dst.exists() or dst.is_symlink():
+                if dst.is_symlink():
+                    dst.unlink()
+                else:
+                    shutil.rmtree(dst)
+            dst.symlink_to(src)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="sbp-skills",
@@ -322,10 +433,106 @@ def main():
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command")
 
+    def cmd_init(args):
+        """Initialize sbp-skills in the current project."""
+        project_dir = Path.cwd()
+        home = Path.home()
+        repo_root = Path(__file__).resolve().parent.parent
+
+        # 1. Detect AI tools
+        tools = detect_tools(home)
+        if not tools:
+            print("No AI coding tools detected. Install Claude Code, GitHub Copilot, or OpenCode first.")
+            sys.exit(1)
+        tool_names = list(tools.keys())
+        print(f"Tools detected: {', '.join(tool_names)}")
+
+        # 2. Detect stack
+        detection_rules = parse_detection_toml(repo_root / "detection.toml")
+        detected_packs = detect_stack(project_dir, detection_rules)
+
+        # Check for explicitly removed packs
+        existing_manifest = load_manifest(project_dir)
+        if existing_manifest:
+            removed = set(existing_manifest.get("removed", []))
+            detected_packs -= removed
+
+        # Resolve dependencies
+        all_depends = set()
+        for name in list(detected_packs):
+            for rule_name, rule in detection_rules.items():
+                if rule["pack"] == name:
+                    for dep in rule.get("depends", []):
+                        all_depends.add(dep)
+        detected_packs |= all_depends
+
+        pack_display = sorted(detected_packs) if detected_packs else ["(none)"]
+        print(f"Packs activated: baseline, {', '.join(pack_display)}")
+
+        # 3. Load defaults
+        defaults = parse_defaults_toml(repo_root / "defaults.toml")
+
+        # 4. Render AGENTS.md
+        render_agents_md(project_dir, repo_root, detected_packs)
+        print("  Rendered AGENTS.md")
+
+        # 5. Render CLAUDE.md (if Claude Code detected)
+        if "claude-code" in tools:
+            render_claude_md(project_dir, repo_root, detected_packs)
+            print("  Rendered CLAUDE.md")
+
+        # 6. Copy commands
+        if "claude-code" in tools:
+            copy_commands(project_dir, repo_root, defaults["commands"], detected_packs)
+            print(f"  Installed {len(defaults['commands'])} commands to .claude/commands/")
+
+        # 7. Symlink skills
+        for tool_name in tool_names:
+            link_skills(home, repo_root, defaults["skills"], tool_name)
+        print(f"  Linked {len(defaults['skills'])} default skills")
+
+        # 8. Write manifest
+        pack_entries = {}
+        for pack_name in detected_packs:
+            manifest_path = repo_root / "packs" / pack_name / "manifest.toml"
+            if manifest_path.exists():
+                pm = parse_pack_manifest(manifest_path)
+                detected_by = "explicit"
+                for rule_name, rule in detection_rules.items():
+                    if rule["pack"] == pack_name:
+                        for pattern in rule["files"]:
+                            if list(project_dir.glob(pattern)):
+                                detected_by = str(list(project_dir.glob(pattern))[0].name)
+                                break
+                pack_entries[pack_name] = {
+                    "version": pm["version"],
+                    "source": "auto-detected" if detected_by != "explicit" else "explicit",
+                    "detected_by": detected_by,
+                }
+
+        skill_entries = {s: {"source": "default"} for s in defaults["skills"]}
+        manifest = create_manifest(
+            central_repo="local",
+            tools=tool_names,
+            baseline_version="1.0.0",
+            packs=pack_entries,
+            skills=skill_entries,
+        )
+        save_manifest(project_dir, manifest)
+        print("  Wrote .sbp/manifest.json")
+
+        print(f"\nRun 'sbp-skills list' to see available packs and skills.")
+        print(f"Run 'sbp-skills browse' to enable more.")
+
+    p_init = subparsers.add_parser("init", help="Initialize sbp-skills in the current project")
+    p_init.set_defaults(func=cmd_init)
+
     args = parser.parse_args()
     if not args.command:
         parser.print_help()
         sys.exit(1)
+    if hasattr(args, "func"):
+        args.func(args)
 
 
 if __name__ == "__main__":
