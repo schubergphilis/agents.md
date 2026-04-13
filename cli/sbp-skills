@@ -426,6 +426,83 @@ def link_skills(home: Path, repo_root: Path, skills: list, tool: str) -> None:
             dst.symlink_to(src)
 
 
+# ---------------------------------------------------------------------------
+# Validation
+# ---------------------------------------------------------------------------
+
+def validate_pack(pack_dir: Path) -> list[str]:
+    """Validate a pack directory. Returns list of error strings (empty = valid)."""
+    errors = []
+    name = pack_dir.name
+
+    manifest_path = pack_dir / "manifest.toml"
+    if not manifest_path.exists():
+        errors.append(f"Missing manifest.toml in {name}/")
+        return errors
+
+    pm = parse_pack_manifest(manifest_path)
+
+    agents_path = pack_dir / "AGENTS.md"
+    if not agents_path.exists():
+        errors.append(f"Missing AGENTS.md in {name}/")
+    else:
+        content = agents_path.read_text()
+        if f"<!-- BEGIN pack: {name} -->" not in content:
+            errors.append(f"AGENTS.md missing section marker '<!-- BEGIN pack: {name} -->'")
+        if f"<!-- END pack: {name} -->" not in content:
+            errors.append(f"AGENTS.md missing section marker '<!-- END pack: {name} -->'")
+
+        body = _extract_body(content)
+        word_count = len(body.split())
+        if word_count > 300:
+            errors.append(f"AGENTS.md fragment is {word_count} words (max 300)")
+
+    if not (pack_dir / "README.md").exists():
+        errors.append(f"Missing README.md in {name}/")
+
+    claude_path = pack_dir / "CLAUDE.md"
+    if claude_path.exists():
+        content = claude_path.read_text()
+        if f"<!-- BEGIN pack: {name} -->" not in content:
+            errors.append(f"CLAUDE.md missing section marker '<!-- BEGIN pack: {name} -->'")
+
+    if len(pm.get("description", "")) < 50:
+        errors.append(f"Description too short (min 50 characters)")
+
+    return errors
+
+
+def validate_skill(skill_dir: Path) -> list[str]:
+    """Validate a skill directory. Returns list of error strings (empty = valid)."""
+    errors = []
+    name = skill_dir.name
+
+    skill_md = skill_dir / "SKILL.md"
+    if not skill_md.exists():
+        errors.append(f"Missing SKILL.md in {name}/")
+        return errors
+
+    skill = parse_skill_md(skill_md.read_text())
+    if skill is None:
+        errors.append(f"Failed to parse SKILL.md frontmatter in {name}/")
+        return errors
+
+    if skill["name"] != name:
+        errors.append(f"SKILL.md name '{skill['name']}' does not match directory name '{name}'")
+
+    if len(skill["name"]) > 64:
+        errors.append(f"Skill name too long (max 64 characters)")
+    if not re.match(r"^[a-z][a-z0-9-]*$", skill["name"]):
+        errors.append(f"Skill name must be lowercase letters, numbers, and hyphens")
+
+    if len(skill["description"]) < 50:
+        errors.append(f"Description too short: {len(skill['description'])} chars (min 50)")
+    if len(skill["description"]) > 1024:
+        errors.append(f"Description too long: {len(skill['description'])} chars (max 1024)")
+
+    return errors
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="sbp-skills",
@@ -804,6 +881,99 @@ def main():
 
     p_doctor = subparsers.add_parser("doctor", help="Health check")
     p_doctor.set_defaults(func=cmd_doctor)
+
+    def cmd_validate(args):
+        """Validate packs or skills."""
+        has_errors = False
+        for path_str in args.paths:
+            path = Path(path_str)
+            if not path.is_dir():
+                print(f"SKIP: {path} is not a directory")
+                continue
+
+            if (path / "manifest.toml").exists():
+                errors = validate_pack(path)
+                label = f"pack:{path.name}"
+            elif (path / "SKILL.md").exists():
+                errors = validate_skill(path)
+                label = f"skill:{path.name}"
+            else:
+                print(f"SKIP: {path} is neither a pack nor a skill")
+                continue
+
+            if errors:
+                print(f"FAIL {label}")
+                for e in errors:
+                    print(f"  - {e}")
+                has_errors = True
+            else:
+                print(f"OK   {label}")
+
+        sys.exit(1 if has_errors else 0)
+
+    p_validate = subparsers.add_parser("validate", help="Validate packs or skills")
+    p_validate.add_argument("paths", nargs="+", help="Pack or skill directories to validate")
+    p_validate.set_defaults(func=cmd_validate)
+
+    def cmd_dev(args):
+        """Scaffold a new pack or skill."""
+        name = args.name
+        repo_root = Path(__file__).resolve().parent.parent
+
+        if args.pack:
+            target = repo_root / "packs" / name
+            if target.exists():
+                print(f"Pack '{name}' already exists at {target}")
+                sys.exit(1)
+            target.mkdir(parents=True)
+
+            (target / "manifest.toml").write_text(
+                f'[pack]\nname = "{name}"\n'
+                f'description = "TODO: describe what this pack does (min 50 characters)"\n'
+                f'version = "0.1.0"\nauthors = ["Schuberg Philis"]\n\n'
+                f'[detect]\nfiles = ["TODO: add file patterns"]\n\n'
+                f'[targets]\nagents_md = true\nclaude_md = false\ncommands = false\n'
+            )
+            (target / "AGENTS.md").write_text(
+                f'<!-- BEGIN pack: {name} -->\n'
+                f'## {name.replace("-", " ").title()} Conventions\n\n'
+                f'TODO: Write imperative, verifiable instructions.\n\n'
+                f'**Acceptance criteria:**\n- [ ] TODO\n'
+                f'<!-- END pack: {name} -->\n'
+            )
+            (target / "README.md").write_text(
+                f'# {name.replace("-", " ").title()} Pack\n\n'
+                f'TODO: Describe what this pack does and why it matters.\n'
+            )
+            print(f"Created pack scaffold at {target}/")
+            print(f"Next: edit the files, then run 'sbp-skills validate {target}'")
+
+        elif args.skill:
+            target = repo_root / "skills" / name
+            if target.exists():
+                print(f"Skill '{name}' already exists at {target}")
+                sys.exit(1)
+            target.mkdir(parents=True)
+
+            (target / "SKILL.md").write_text(
+                f'---\nname: {name}\n'
+                f'description: "TODO: describe what this skill does (min 50 characters)"\n'
+                f'metadata:\n  domain: TODO\n  lifecycle: TODO\n---\n\n'
+                f'# {name.replace("-", " ").title()}\n\n'
+                f'TODO: Write instructions for the agent.\n'
+            )
+            print(f"Created skill scaffold at {target}/")
+            print(f"Next: edit SKILL.md, then run 'sbp-skills validate {target}'")
+
+        else:
+            print("Specify --pack or --skill")
+            sys.exit(1)
+
+    p_dev = subparsers.add_parser("dev", help="Scaffold a new pack or skill")
+    p_dev.add_argument("name", help="Name (lowercase-with-hyphens)")
+    p_dev.add_argument("--pack", action="store_true", help="Create a domain pack")
+    p_dev.add_argument("--skill", action="store_true", help="Create a skill")
+    p_dev.set_defaults(func=cmd_dev)
 
     args = parser.parse_args()
     if not args.command:
