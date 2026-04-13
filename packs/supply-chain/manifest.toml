@@ -1,0 +1,13 @@
+[pack]
+name = "supply-chain"
+description = "GitHub Actions supply-chain hardening — pin every action to full commit SHA"
+version = "1.0.0"
+authors = ["Schuberg Philis"]
+
+[detect]
+files = [".github/workflows/*.yml", ".github/workflows/*.yaml"]
+
+[targets]
+agents_md = true
+claude_md = false
+commands = false
