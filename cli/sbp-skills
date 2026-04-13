@@ -6,6 +6,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 import tomllib
 from datetime import datetime, timezone
@@ -526,6 +527,283 @@ def main():
 
     p_init = subparsers.add_parser("init", help="Initialize sbp-skills in the current project")
     p_init.set_defaults(func=cmd_init)
+
+    def cmd_update(args):
+        """Update sbp-skills to latest from central repo."""
+        project_dir = Path.cwd()
+        home = Path.home()
+        repo_root = Path(__file__).resolve().parent.parent
+
+        manifest = load_manifest(project_dir)
+        if manifest is None:
+            print("No .sbp/manifest.json found. Run 'sbp-skills init' first.")
+            sys.exit(1)
+
+        tools = detect_tools(home)
+        detection_rules = parse_detection_toml(repo_root / "detection.toml")
+        detected_packs = detect_stack(project_dir, detection_rules)
+
+        removed = set(manifest.get("removed", []))
+        detected_packs -= removed
+
+        for pack_name, info in manifest.get("packs", {}).items():
+            if info.get("source") == "explicit":
+                detected_packs.add(pack_name)
+
+        defaults = parse_defaults_toml(repo_root / "defaults.toml")
+
+        old_packs = set(manifest.get("packs", {}).keys())
+        added_packs = detected_packs - old_packs
+        removed_packs = old_packs - detected_packs
+
+        render_agents_md(project_dir, repo_root, detected_packs)
+        if "claude-code" in tools:
+            render_claude_md(project_dir, repo_root, detected_packs)
+            copy_commands(project_dir, repo_root, defaults["commands"], detected_packs)
+
+        all_skills = list(set(defaults["skills"]) | set(manifest.get("skills", {}).keys()))
+        for tool_name in tools:
+            link_skills(home, repo_root, all_skills, tool_name)
+
+        pack_entries = {}
+        for pack_name in detected_packs:
+            manifest_path = repo_root / "packs" / pack_name / "manifest.toml"
+            if manifest_path.exists():
+                pm = parse_pack_manifest(manifest_path)
+                old_info = manifest.get("packs", {}).get(pack_name, {})
+                pack_entries[pack_name] = {
+                    "version": pm["version"],
+                    "source": old_info.get("source", "auto-detected"),
+                    "detected_by": old_info.get("detected_by", "unknown"),
+                }
+
+        manifest["packs"] = pack_entries
+        manifest["tools_detected"] = list(tools.keys())
+        save_manifest(project_dir, manifest)
+
+        if added_packs:
+            print(f"Added packs: {', '.join(sorted(added_packs))}")
+        if removed_packs:
+            print(f"Removed packs: {', '.join(sorted(removed_packs))}")
+        if not added_packs and not removed_packs:
+            print("All packs up to date.")
+        print("Update complete.")
+
+    p_update = subparsers.add_parser("update", help="Update to latest from central repo")
+    p_update.set_defaults(func=cmd_update)
+
+    def cmd_list(args):
+        """List available packs and skills."""
+        project_dir = Path.cwd()
+        repo_root = Path(__file__).resolve().parent.parent
+
+        manifest = load_manifest(project_dir)
+
+        print("PACKS:")
+        packs_dir = repo_root / "packs"
+        if packs_dir.is_dir():
+            for pack_dir in sorted(packs_dir.iterdir()):
+                if pack_dir.is_dir() and (pack_dir / "manifest.toml").exists():
+                    pm = parse_pack_manifest(pack_dir / "manifest.toml")
+                    status = ""
+                    if manifest and pm["name"] in manifest.get("packs", {}):
+                        source = manifest["packs"][pm["name"]].get("source", "")
+                        status = f" [{source}]"
+                    elif manifest and pm["name"] in manifest.get("removed", []):
+                        status = " [removed]"
+                    print(f"  {pm['name']:<20} {pm['description']}{status}")
+
+        print("\nSKILLS:")
+        skills_dir = repo_root / "skills"
+        defaults = parse_defaults_toml(repo_root / "defaults.toml")
+        if skills_dir.is_dir():
+            for skill_dir in sorted(skills_dir.iterdir()):
+                skill_md = skill_dir / "SKILL.md"
+                if skill_md.exists():
+                    skill = parse_skill_md(skill_md.read_text())
+                    if skill:
+                        is_default = skill["name"] in defaults["skills"]
+                        is_enabled = manifest and skill["name"] in manifest.get("skills", {})
+                        status = " [default]" if is_default else (" [enabled]" if is_enabled else "")
+                        print(f"  {skill['name']:<25} {skill['description'][:60]}{status}")
+
+        print("\nCOMMANDS:")
+        for cmd_name in defaults["commands"]:
+            cmd_file = repo_root / "baseline" / "commands" / f"{cmd_name}.md"
+            if cmd_file.exists():
+                first_line = cmd_file.read_text().split("\n")[0].strip()
+                print(f"  /{cmd_name:<20} {first_line}")
+
+    p_list = subparsers.add_parser("list", help="List available packs, skills, and commands")
+    p_list.set_defaults(func=cmd_list)
+
+    def cmd_add(args):
+        """Add a domain pack explicitly."""
+        project_dir = Path.cwd()
+        repo_root = Path(__file__).resolve().parent.parent
+        pack_name = args.pack
+
+        pack_dir = repo_root / "packs" / pack_name
+        if not pack_dir.is_dir():
+            print(f"Pack '{pack_name}' not found. Run 'sbp-skills list' to see available packs.")
+            sys.exit(1)
+
+        manifest = load_manifest(project_dir)
+        if manifest is None:
+            print("Run 'sbp-skills init' first.")
+            sys.exit(1)
+
+        if pack_name in manifest.get("removed", []):
+            manifest["removed"].remove(pack_name)
+
+        pm = parse_pack_manifest(pack_dir / "manifest.toml")
+        manifest["packs"][pack_name] = {
+            "version": pm["version"],
+            "source": "explicit",
+            "detected_by": "manual",
+        }
+        save_manifest(project_dir, manifest)
+
+        detected_packs = set(manifest["packs"].keys())
+        render_agents_md(project_dir, repo_root, detected_packs)
+
+        tools = detect_tools(Path.home())
+        if "claude-code" in tools:
+            render_claude_md(project_dir, repo_root, detected_packs)
+
+        print(f"Added pack: {pack_name}")
+
+    p_add = subparsers.add_parser("add", help="Add a domain pack explicitly")
+    p_add.add_argument("pack", help="Pack name (e.g., terraform)")
+    p_add.set_defaults(func=cmd_add)
+
+    def cmd_remove(args):
+        """Remove a domain pack."""
+        project_dir = Path.cwd()
+        repo_root = Path(__file__).resolve().parent.parent
+        pack_name = args.pack
+
+        manifest = load_manifest(project_dir)
+        if manifest is None:
+            print("Run 'sbp-skills init' first.")
+            sys.exit(1)
+
+        manifest["packs"].pop(pack_name, None)
+        if pack_name not in manifest.get("removed", []):
+            manifest["removed"].append(pack_name)
+        save_manifest(project_dir, manifest)
+
+        detected_packs = set(manifest["packs"].keys())
+        render_agents_md(project_dir, repo_root, detected_packs)
+
+        tools = detect_tools(Path.home())
+        if "claude-code" in tools:
+            render_claude_md(project_dir, repo_root, detected_packs)
+
+        print(f"Removed pack: {pack_name}")
+
+    p_remove = subparsers.add_parser("remove", help="Remove a domain pack")
+    p_remove.add_argument("pack", help="Pack name to remove")
+    p_remove.set_defaults(func=cmd_remove)
+
+    def cmd_enable(args):
+        """Enable a skill."""
+        home = Path.home()
+        repo_root = Path(__file__).resolve().parent.parent
+        skill_name = args.skill
+
+        skill_dir = repo_root / "skills" / skill_name
+        if not skill_dir.is_dir():
+            print(f"Skill '{skill_name}' not found. Run 'sbp-skills list' to see available skills.")
+            sys.exit(1)
+
+        if args.glob:
+            tools = detect_tools(home)
+            for tool_name in tools:
+                link_skills(home, repo_root, [skill_name], tool_name)
+            print(f"Enabled skill globally: {skill_name}")
+        else:
+            project_dir = Path.cwd()
+            manifest = load_manifest(project_dir)
+            if manifest is None:
+                print("Run 'sbp-skills init' first.")
+                sys.exit(1)
+            manifest.setdefault("skills", {})[skill_name] = {"source": "enabled"}
+            save_manifest(project_dir, manifest)
+            tools = detect_tools(home)
+            for tool_name in tools:
+                link_skills(home, repo_root, [skill_name], tool_name)
+            print(f"Enabled skill: {skill_name}")
+
+    p_enable = subparsers.add_parser("enable", help="Enable a skill")
+    p_enable.add_argument("skill", help="Skill name")
+    p_enable.add_argument("--global", dest="glob", action="store_true", help="Enable globally")
+    p_enable.set_defaults(func=cmd_enable)
+
+    def cmd_disable(args):
+        """Disable a skill."""
+        home = Path.home()
+        skill_name = args.skill
+
+        for tool_name, info in TOOL_DIRS.items():
+            if info["skills_dir"]:
+                link = home / info["skills_dir"] / skill_name
+                if link.is_symlink():
+                    link.unlink()
+
+        project_dir = Path.cwd()
+        manifest = load_manifest(project_dir)
+        if manifest:
+            manifest.get("skills", {}).pop(skill_name, None)
+            save_manifest(project_dir, manifest)
+
+        print(f"Disabled skill: {skill_name}")
+
+    p_disable = subparsers.add_parser("disable", help="Disable a skill")
+    p_disable.add_argument("skill", help="Skill name")
+    p_disable.set_defaults(func=cmd_disable)
+
+    def cmd_doctor(args):
+        """Health check."""
+        home = Path.home()
+        repo_root = Path(__file__).resolve().parent.parent
+        project_dir = Path.cwd()
+        ok = True
+
+        v = sys.version_info
+        status = "OK" if v >= (3, 11) else "WARN: need 3.11+"
+        print(f"Python: {v.major}.{v.minor}.{v.micro} {status}")
+
+        try:
+            subprocess.run(["git", "--version"], capture_output=True, check=True)
+            print("Git: OK")
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print("Git: NOT FOUND")
+            ok = False
+
+        tools = detect_tools(home)
+        if tools:
+            print(f"AI tools: {', '.join(tools.keys())}")
+        else:
+            print("AI tools: NONE DETECTED")
+            ok = False
+
+        manifest = load_manifest(project_dir)
+        if manifest:
+            print(f"Project initialized: yes ({len(manifest.get('packs', {}))} packs)")
+        else:
+            print("Project initialized: no (run 'sbp-skills init')")
+
+        if (repo_root / "baseline" / "AGENTS.md").exists():
+            print("Central repo: OK")
+        else:
+            print("Central repo: NOT FOUND")
+            ok = False
+
+        sys.exit(0 if ok else 1)
+
+    p_doctor = subparsers.add_parser("doctor", help="Health check")
+    p_doctor.set_defaults(func=cmd_doctor)
 
     args = parser.parse_args()
     if not args.command:
