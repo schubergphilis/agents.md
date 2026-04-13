@@ -23,6 +23,6 @@ Single-file Python CLI at `cli/sbp-skills` (stdlib only, Python 3.11+). Content 
 
 - CLI must use only Python standard library — no pip dependencies
 - Pack AGENTS.md fragments must be under 300 words
-- All fragments use HTML comment section markers: `<!-- BEGIN ... -->` / `<!-- END ... -->`
+- Pack AGENTS.md files are plain markdown, concatenated on init/update
 - Imperative voice in all agent-facing content
 - SKILL.md files follow the agentskills.io spec (YAML frontmatter + markdown body)

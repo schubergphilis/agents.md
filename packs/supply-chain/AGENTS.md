@@ -1,4 +1,3 @@
-<!-- BEGIN pack: supply-chain -->
 ## Supply-Chain Hardening
 
 **Rule:** Pin every GitHub Actions `uses:` reference to a full 40-character commit SHA. Add a version comment for humans.
@@ -21,4 +20,3 @@ uses: actions/checkout@v4
 - [ ] Every `uses:` line is pinned to a 40-char SHA
 - [ ] Every pinned line has a `# vX.Y.Z` comment
 - [ ] No `uses:` lines reference branch names or mutable tags
-<!-- END pack: supply-chain -->

@@ -11,7 +11,7 @@ def test_validate_valid_pack(repo_root):
 def test_validate_pack_missing_manifest(tmp_path):
     pack_dir = tmp_path / "bad-pack"
     pack_dir.mkdir()
-    (pack_dir / "AGENTS.md").write_text("<!-- BEGIN pack: bad-pack -->\nStuff\n<!-- END pack: bad-pack -->\n")
+    (pack_dir / "AGENTS.md").write_text("## Bad Pack\n\nStuff\n")
     errors = cli.validate_pack(pack_dir)
     assert any("manifest.toml" in e for e in errors)
 
@@ -22,16 +22,6 @@ def test_validate_pack_missing_agents_md(tmp_path):
     (pack_dir / "manifest.toml").write_text('[pack]\nname = "no-agents"\ndescription = "Test pack with enough description for validation"\nversion = "1.0.0"\n')
     errors = cli.validate_pack(pack_dir)
     assert any("AGENTS.md" in e for e in errors)
-
-
-def test_validate_pack_missing_section_markers(tmp_path):
-    pack_dir = tmp_path / "no-markers"
-    pack_dir.mkdir()
-    (pack_dir / "manifest.toml").write_text('[pack]\nname = "no-markers"\ndescription = "Test pack with enough description for validation"\nversion = "1.0.0"\n')
-    (pack_dir / "AGENTS.md").write_text("Just text, no markers.\n")
-    (pack_dir / "README.md").write_text("# Test\n")
-    errors = cli.validate_pack(pack_dir)
-    assert any("section marker" in e.lower() or "marker" in e.lower() for e in errors)
 
 
 def test_validate_valid_skill(repo_root):

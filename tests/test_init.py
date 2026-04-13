@@ -14,10 +14,8 @@ def test_render_agents_md(tmp_project, repo_root):
     )
 
     agents_md = (tmp_project / "AGENTS.md").read_text()
-    assert "<!-- BEGIN baseline -->" in agents_md
-    assert "<!-- END baseline -->" in agents_md
-    assert "<!-- BEGIN pack: python -->" in agents_md
     assert "Mission-Critical Engineering" in agents_md
+    assert "Python Conventions" in agents_md
 
 
 def test_render_claude_md(tmp_project, repo_root):
@@ -29,8 +27,8 @@ def test_render_claude_md(tmp_project, repo_root):
     )
 
     claude_md = (tmp_project / "CLAUDE.md").read_text()
-    assert "<!-- BEGIN baseline -->" in claude_md
-    assert "<!-- BEGIN pack: python -->" in claude_md
+    assert "Mission-Critical Baseline" in claude_md
+    assert "Python — Claude Code" in claude_md
 
 
 def test_render_claude_md_skips_packs_without_claude_md(tmp_project, repo_root):
@@ -42,8 +40,8 @@ def test_render_claude_md_skips_packs_without_claude_md(tmp_project, repo_root):
     )
 
     claude_md = (tmp_project / "CLAUDE.md").read_text()
-    assert "<!-- BEGIN baseline -->" in claude_md
-    assert "supply-chain" not in claude_md
+    assert "Mission-Critical Baseline" in claude_md
+    assert "Supply-Chain" not in claude_md
 
 
 def test_copy_commands(tmp_project, repo_root):
@@ -79,15 +77,13 @@ def test_link_skills(tmp_home, repo_root):
 
 
 def test_init_preserves_local_section(tmp_project, repo_root):
-    """Test that re-running render preserves LOCAL sections."""
+    """Test that re-running render preserves local additions below separator."""
     cli.render_agents_md(tmp_project, repo_root, {"python"})
-
-    agents_md = (tmp_project / "AGENTS.md").read_text()
-    agents_md += "\n<!-- LOCAL -->\nOur team-specific rules.\n<!-- /LOCAL -->\n"
-    (tmp_project / "AGENTS.md").write_text(agents_md)
+    content = (tmp_project / "AGENTS.md").read_text()
+    content += "\n---\nOur team-specific rules.\n"
+    (tmp_project / "AGENTS.md").write_text(content)
 
     cli.render_agents_md(tmp_project, repo_root, {"python"})
 
     updated = (tmp_project / "AGENTS.md").read_text()
     assert "Our team-specific rules." in updated
-    assert "<!-- LOCAL -->" in updated

@@ -1,4 +1,3 @@
-<!-- BEGIN pack: python -->
 ## Python Conventions
 
 **Toolchain:** uv (package management), ruff (lint + format), pyright (type checking), pytest (testing).
@@ -24,4 +23,3 @@ pyproject.toml    # Project config (single source of truth)
 - [ ] `pyright src/` passes
 - [ ] `uv run pytest` passes
 - [ ] No unhandled error paths in new code
-<!-- END pack: python -->

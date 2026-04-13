@@ -64,82 +64,6 @@ def parse_pack_manifest(path: Path) -> dict:
     }
 
 
-# ---------------------------------------------------------------------------
-# Fragment merging
-# ---------------------------------------------------------------------------
-
-def insert_fragment(content: str, fragment_id: str, fragment_body: str) -> str:
-    """Insert or replace a fragment in content. Preserves LOCAL sections."""
-    begin_marker = f"<!-- BEGIN {fragment_id} -->"
-    end_marker = f"<!-- END {fragment_id} -->"
-    new_block = f"{begin_marker}\n{fragment_body.rstrip()}\n{end_marker}\n"
-
-    if begin_marker in content:
-        # Replace existing fragment
-        lines = content.split("\n")
-        result = []
-        skipping = False
-        replaced = False
-        for line in lines:
-            if line.strip() == begin_marker:
-                skipping = True
-                if not replaced:
-                    result.append(new_block.rstrip())
-                    replaced = True
-                continue
-            if skipping and line.strip() == end_marker:
-                skipping = False
-                continue
-            if not skipping:
-                result.append(line)
-        return "\n".join(result) + "\n" if not content.endswith("\n") else "\n".join(result)
-    else:
-        # Append before LOCAL section if it exists, otherwise append at end
-        local_marker = "<!-- LOCAL -->"
-        if local_marker in content:
-            idx = content.index(local_marker)
-            return content[:idx] + new_block + "\n" + content[idx:]
-        else:
-            separator = "\n" if content and not content.endswith("\n") else ""
-            return content + separator + new_block
-
-
-def remove_fragment(content: str, fragment_id: str) -> str:
-    """Remove a fragment from content."""
-    begin_marker = f"<!-- BEGIN {fragment_id} -->"
-    end_marker = f"<!-- END {fragment_id} -->"
-
-    if begin_marker not in content:
-        return content
-
-    lines = content.split("\n")
-    result = []
-    skipping = False
-    for line in lines:
-        if line.strip() == begin_marker:
-            skipping = True
-            continue
-        if skipping and line.strip() == end_marker:
-            skipping = False
-            continue
-        if not skipping:
-            result.append(line)
-
-    cleaned = "\n".join(result)
-    while "\n\n\n" in cleaned:
-        cleaned = cleaned.replace("\n\n\n", "\n\n")
-    return cleaned
-
-
-def extract_fragment_ids(content: str) -> list[str]:
-    """Extract all fragment IDs from content in order."""
-    ids = []
-    for line in content.split("\n"):
-        stripped = line.strip()
-        if stripped.startswith("<!-- BEGIN ") and stripped.endswith(" -->"):
-            fid = stripped[len("<!-- BEGIN "):-len(" -->")]
-            ids.append(fid)
-    return ids
 
 
 # ---------------------------------------------------------------------------
@@ -321,69 +245,70 @@ def parse_skill_md(content: str) -> dict | None:
 # Rendering — assemble fragments into project files
 # ---------------------------------------------------------------------------
 
-def _extract_body(content: str) -> str:
-    """Extract body between BEGIN/END markers, or return full content if no markers."""
-    lines = content.split("\n")
-    body_lines = []
-    in_body = False
-    for line in lines:
-        stripped = line.strip()
-        if stripped.startswith("<!-- BEGIN "):
-            in_body = True
-            continue
-        if stripped.startswith("<!-- END "):
-            in_body = False
-            continue
-        if in_body:
-            body_lines.append(line)
-    return "\n".join(body_lines) if body_lines else content
-
-
 def render_agents_md(project_dir: Path, repo_root: Path, detected_packs: set) -> None:
-    """Render AGENTS.md with baseline + detected pack fragments."""
-    agents_path = project_dir / "AGENTS.md"
-    content = agents_path.read_text() if agents_path.exists() else ""
+    """Render AGENTS.md by concatenating baseline + detected pack fragments."""
+    parts = []
 
-    # Insert baseline
-    baseline = (repo_root / "baseline" / "AGENTS.md").read_text()
-    baseline_body = _extract_body(baseline)
-    content = insert_fragment(content, "baseline", baseline_body)
+    # Baseline
+    baseline = repo_root / "baseline" / "AGENTS.md"
+    if baseline.exists():
+        parts.append(baseline.read_text().strip())
 
-    # Insert detected pack fragments
+    # Detected pack fragments
     for pack_name in sorted(detected_packs):
         pack_agents = repo_root / "packs" / pack_name / "AGENTS.md"
         if pack_agents.exists():
-            pack_body = _extract_body(pack_agents.read_text())
-            content = insert_fragment(content, f"pack: {pack_name}", pack_body)
+            parts.append(pack_agents.read_text().strip())
 
-    # Remove pack fragments no longer detected
-    existing_ids = extract_fragment_ids(content)
-    for fid in existing_ids:
-        if fid.startswith("pack: "):
-            pack_name = fid[len("pack: "):]
-            if pack_name not in detected_packs:
-                content = remove_fragment(content, fid)
+    managed_content = "\n\n".join(parts)
 
-    agents_path.write_text(content)
+    # Preserve local additions below separator
+    agents_path = project_dir / "AGENTS.md"
+    local_content = ""
+    if agents_path.exists():
+        existing = agents_path.read_text()
+        separator = "\n---\n"
+        if separator in existing:
+            local_content = existing.split(separator, 1)[1]
+
+    result = managed_content
+    if local_content:
+        result += "\n\n---\n" + local_content
+
+    agents_path.write_text(result + "\n")
 
 
 def render_claude_md(project_dir: Path, repo_root: Path, detected_packs: set) -> None:
-    """Render CLAUDE.md with baseline + detected pack fragments (if they have CLAUDE.md)."""
-    claude_path = project_dir / "CLAUDE.md"
-    content = claude_path.read_text() if claude_path.exists() else ""
+    """Render CLAUDE.md by concatenating baseline + detected pack fragments."""
+    parts = []
 
     baseline_claude = repo_root / "baseline" / "CLAUDE.md"
     if baseline_claude.exists():
-        baseline_body = _extract_body(baseline_claude.read_text())
-        content = insert_fragment(content, "baseline", baseline_body)
+        parts.append(baseline_claude.read_text().strip())
 
     for pack_name in sorted(detected_packs):
         pack_claude = repo_root / "packs" / pack_name / "CLAUDE.md"
         if pack_claude.exists():
-            pack_body = _extract_body(pack_claude.read_text())
-            content = insert_fragment(content, f"pack: {pack_name}", pack_body)
+            parts.append(pack_claude.read_text().strip())
 
-    claude_path.write_text(content)
+    if not parts:
+        return
+
+    managed_content = "\n\n".join(parts)
+
+    claude_path = project_dir / "CLAUDE.md"
+    local_content = ""
+    if claude_path.exists():
+        existing = claude_path.read_text()
+        separator = "\n---\n"
+        if separator in existing:
+            local_content = existing.split(separator, 1)[1]
+
+    result = managed_content
+    if local_content:
+        result += "\n\n---\n" + local_content
+
+    claude_path.write_text(result + "\n")
 
 
 def copy_commands(project_dir: Path, repo_root: Path, defaults: list,
@@ -447,24 +372,12 @@ def validate_pack(pack_dir: Path) -> list[str]:
         errors.append(f"Missing AGENTS.md in {name}/")
     else:
         content = agents_path.read_text()
-        if f"<!-- BEGIN pack: {name} -->" not in content:
-            errors.append(f"AGENTS.md missing section marker '<!-- BEGIN pack: {name} -->'")
-        if f"<!-- END pack: {name} -->" not in content:
-            errors.append(f"AGENTS.md missing section marker '<!-- END pack: {name} -->'")
-
-        body = _extract_body(content)
-        word_count = len(body.split())
+        word_count = len(content.split())
         if word_count > 300:
-            errors.append(f"AGENTS.md fragment is {word_count} words (max 300)")
+            errors.append(f"AGENTS.md is {word_count} words (max 300)")
 
     if not (pack_dir / "README.md").exists():
         errors.append(f"Missing README.md in {name}/")
-
-    claude_path = pack_dir / "CLAUDE.md"
-    if claude_path.exists():
-        content = claude_path.read_text()
-        if f"<!-- BEGIN pack: {name} -->" not in content:
-            errors.append(f"CLAUDE.md missing section marker '<!-- BEGIN pack: {name} -->'")
 
     if len(pm.get("description", "")) < 50:
         errors.append(f"Description too short (min 50 characters)")
@@ -935,11 +848,9 @@ def main():
                 f'[targets]\nagents_md = true\nclaude_md = false\ncommands = false\n'
             )
             (target / "AGENTS.md").write_text(
-                f'<!-- BEGIN pack: {name} -->\n'
                 f'## {name.replace("-", " ").title()} Conventions\n\n'
                 f'TODO: Write imperative, verifiable instructions.\n\n'
                 f'**Acceptance criteria:**\n- [ ] TODO\n'
-                f'<!-- END pack: {name} -->\n'
             )
             (target / "README.md").write_text(
                 f'# {name.replace("-", " ").title()} Pack\n\n'
