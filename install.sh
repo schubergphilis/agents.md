@@ -2,9 +2,13 @@
 set -euo pipefail
 
 # sbp-skills installer
-# Usage: curl -sSL https://raw.githubusercontent.com/schuberg/sbp-skills/main/install.sh | bash
+# Usage: curl -sSL https://.../install.sh | bash
+#
+# Override the default repo with SBP_SKILLS_REPO:
+#   SBP_SKILLS_REPO=https://gitlab.com/my-org/sbp-skills.git curl ... | bash
 
-REPO="schuberg/sbp-skills"
+DEFAULT_REPO="https://github.com/schuberg/sbp-skills.git"
+REPO_URL="${SBP_SKILLS_REPO:-$DEFAULT_REPO}"
 INSTALL_DIR="${HOME}/.local/bin"
 CACHE_DIR="${HOME}/.cache/sbp-skills"
 
@@ -43,7 +47,7 @@ if [ -d "$CACHE_DIR/repo" ]; then
 else
     echo "Cloning central repo..."
     mkdir -p "$CACHE_DIR"
-    git clone --quiet "https://github.com/${REPO}.git" "$CACHE_DIR/repo"
+    git clone --quiet "$REPO_URL" "$CACHE_DIR/repo"
 fi
 
 # Install the CLI

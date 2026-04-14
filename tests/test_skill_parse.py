@@ -39,6 +39,23 @@ def test_parse_skill_md_from_file(repo_root):
     assert skill["metadata"]["lifecycle"] == "plan"
 
 
+def test_parse_skill_md_four_space_indent():
+    content = """---
+name: four-space
+description: A skill with four-space indented metadata that should parse correctly for validation.
+metadata:
+    domain: platform
+    lifecycle: build
+---
+
+Body here.
+"""
+    skill = cli.parse_skill_md(content)
+    assert skill is not None
+    assert skill["metadata"]["domain"] == "platform"
+    assert skill["metadata"]["lifecycle"] == "build"
+
+
 def test_parse_skill_md_multiline_description():
     content = """---
 name: multi-desc

@@ -195,7 +195,7 @@ def _parse_frontmatter(text: str) -> dict:
             continue
 
         # Indented line — either nested dict entry or continuation of a scalar
-        if line.startswith("  ") or line.startswith("\t"):
+        if line[0:1] in (" ", "\t") and line.strip():
             stripped = line.strip()
             # Check if it's a key: value pair (nested dict)
             kv_match = re.match(r"^([\w][\w-]*):\s+(.*)", stripped)
@@ -487,6 +487,16 @@ def main():
             render_claude_md(project_dir, repo_root, detected_packs)
             print("  Rendered CLAUDE.md")
 
+        # 5b. Render Copilot instructions (if Copilot detected)
+        if "copilot" in tools:
+            copilot_dir = project_dir / ".github"
+            copilot_dir.mkdir(parents=True, exist_ok=True)
+            copilot_file = copilot_dir / "copilot-instructions.md"
+            # Copilot reads this file — write the same content as AGENTS.md
+            agents_content = (project_dir / "AGENTS.md").read_text()
+            copilot_file.write_text(agents_content)
+            print("  Rendered .github/copilot-instructions.md")
+
         # 6. Copy commands (daily-use + contributor)
         if "claude-code" in tools:
             all_commands = defaults["commands"] + defaults.get("contributor_commands", [])
@@ -528,6 +538,18 @@ def main():
         save_manifest(project_dir, manifest)
         print("  Wrote .sbp/manifest.json")
 
+        # 9. Add .sbp/ to .gitignore if needed
+        gitignore = project_dir / ".gitignore"
+        if gitignore.exists():
+            content = gitignore.read_text()
+            if ".sbp/" not in content:
+                with open(gitignore, "a") as f:
+                    f.write("\n# sbp-skills manifest (machine-specific)\n.sbp/\n")
+                print("  Added .sbp/ to .gitignore")
+        else:
+            gitignore.write_text("# sbp-skills manifest (machine-specific)\n.sbp/\n")
+            print("  Created .gitignore with .sbp/")
+
         print(f"\nYour AI agent now thinks mission-critical.")
         print(f"Try /review, /challenge, or /what-if-this-fails in your next session.")
         print(f"Run 'sbp-skills list' to see all available skills.")
@@ -568,6 +590,14 @@ def main():
             render_claude_md(project_dir, repo_root, detected_packs)
             all_commands = defaults["commands"] + defaults.get("contributor_commands", [])
             copy_commands(project_dir, repo_root, all_commands, detected_packs)
+
+        if "copilot" in tools:
+            copilot_dir = project_dir / ".github"
+            copilot_dir.mkdir(parents=True, exist_ok=True)
+            copilot_file = copilot_dir / "copilot-instructions.md"
+            agents_content = (project_dir / "AGENTS.md").read_text()
+            copilot_file.write_text(agents_content)
+            print("  Rendered .github/copilot-instructions.md")
 
         all_skills = list(set(defaults["skills"]) | set(manifest.get("skills", {}).keys()))
         for tool_name in tools:
@@ -679,6 +709,12 @@ def main():
         if "claude-code" in tools:
             render_claude_md(project_dir, repo_root, detected_packs)
 
+        if "copilot" in tools:
+            copilot_file = project_dir / ".github" / "copilot-instructions.md"
+            if copilot_file.exists() or (project_dir / ".github").is_dir():
+                agents_content = (project_dir / "AGENTS.md").read_text()
+                copilot_file.write_text(agents_content)
+
         print(f"Added pack: {pack_name}")
 
     p_add = subparsers.add_parser("add", help="Add a domain pack explicitly")
@@ -707,6 +743,12 @@ def main():
         tools = detect_tools(Path.home())
         if "claude-code" in tools:
             render_claude_md(project_dir, repo_root, detected_packs)
+
+        if "copilot" in tools:
+            copilot_file = project_dir / ".github" / "copilot-instructions.md"
+            if copilot_file.exists() or (project_dir / ".github").is_dir():
+                agents_content = (project_dir / "AGENTS.md").read_text()
+                copilot_file.write_text(agents_content)
 
         print(f"Removed pack: {pack_name}")
 
