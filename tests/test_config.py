@@ -16,12 +16,7 @@ def test_parse_defaults_toml(repo_root):
 
 
 def test_parse_pack_manifest(repo_root):
-    """This test will pass once packs/python/manifest.toml exists (Task 7)."""
-    manifest_path = repo_root / "packs" / "python" / "manifest.toml"
-    if not manifest_path.exists():
-        import pytest
-        pytest.skip("packs/python/manifest.toml not yet created (Task 7)")
-    manifest = cli.parse_pack_manifest(manifest_path)
+    manifest = cli.parse_pack_manifest(repo_root / "packs" / "python" / "manifest.toml")
     assert manifest["name"] == "python"
     assert manifest["version"] == "1.0.0"
     assert "pyproject.toml" in manifest["detect_files"]

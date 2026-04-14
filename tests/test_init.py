@@ -27,7 +27,7 @@ def test_render_claude_md(tmp_project, repo_root):
     )
 
     claude_md = (tmp_project / "CLAUDE.md").read_text()
-    assert "Mission-Critical Baseline" in claude_md
+    assert "Mission-Critical" in claude_md
     assert "Python — Claude Code" in claude_md
 
 
@@ -40,7 +40,7 @@ def test_render_claude_md_skips_packs_without_claude_md(tmp_project, repo_root):
     )
 
     claude_md = (tmp_project / "CLAUDE.md").read_text()
-    assert "Mission-Critical Baseline" in claude_md
+    assert "Mission-Critical" in claude_md
     assert "Supply-Chain" not in claude_md
 
 

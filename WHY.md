@@ -65,6 +65,16 @@ The same team that builds it runs it. The agent thinks about what happens after 
 | `runbook-author` | Generate operational runbooks from the codebase |
 | `observability-check` | Verify monitoring, alerting, and logging coverage |
 
+### Learn
+
+When you're new to a team, a codebase, or SBP itself — the agent is your onboarding partner. It teaches SBP thinking through every interaction. The questions it asks ("what's the blast radius?", "who gets paged?") are the questions senior engineers ask. After a month, you ask them instinctively — not because you read a wiki, but because you practiced it.
+
+| | |
+|---|---|
+| `/explain` | Quick orientation on unfamiliar code or infra |
+| `explain-codebase` | Deep dive — data flow, patterns, design decisions |
+| `why-we-do-this` | The reasoning behind SBP conventions |
+
 ### Contribute
 
 Your experience becomes a shared asset. Write a pack or skill, and every engineer on the team benefits.

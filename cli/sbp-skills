@@ -388,6 +388,9 @@ def validate_pack(pack_dir: Path) -> list[str]:
 
     pm = parse_pack_manifest(manifest_path)
 
+    if pm.get("name") and pm["name"] != name:
+        errors.append(f"manifest.toml name '{pm['name']}' does not match directory name '{name}'")
+
     agents_path = pack_dir / "AGENTS.md"
     if not agents_path.exists():
         errors.append(f"Missing AGENTS.md in {name}/")
@@ -469,15 +472,6 @@ def main():
             removed = set(existing_manifest.get("removed", []))
             detected_packs -= removed
 
-        # Resolve dependencies
-        all_depends = set()
-        for name in list(detected_packs):
-            for rule_name, rule in detection_rules.items():
-                if rule["pack"] == name:
-                    for dep in rule.get("depends", []):
-                        all_depends.add(dep)
-        detected_packs |= all_depends
-
         pack_display = sorted(detected_packs) if detected_packs else ["(none)"]
         print(f"Packs activated: baseline, {', '.join(pack_display)}")
 
@@ -497,7 +491,7 @@ def main():
         if "claude-code" in tools:
             all_commands = defaults["commands"] + defaults.get("contributor_commands", [])
             copy_commands(project_dir, repo_root, all_commands, detected_packs)
-            print(f"  Installed {len(defaults['commands'])} commands to .claude/commands/")
+            print(f"  Installed {len(all_commands)} commands to .claude/commands/")
 
         # 7. Symlink skills
         for tool_name in tool_names:
@@ -572,7 +566,8 @@ def main():
         render_agents_md(project_dir, repo_root, detected_packs)
         if "claude-code" in tools:
             render_claude_md(project_dir, repo_root, detected_packs)
-            copy_commands(project_dir, repo_root, defaults["commands"], detected_packs)
+            all_commands = defaults["commands"] + defaults.get("contributor_commands", [])
+            copy_commands(project_dir, repo_root, all_commands, detected_packs)
 
         all_skills = list(set(defaults["skills"]) | set(manifest.get("skills", {}).keys()))
         for tool_name in tools:

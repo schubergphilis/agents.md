@@ -1,7 +1,0 @@
-org: schuberg-philis
-validation:
-  description_min_length: 50
-  max_fragment_words: 300
-  required_skill_metadata:
-    - domain
-    - lifecycle
