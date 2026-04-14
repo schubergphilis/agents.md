@@ -2,4 +2,8 @@
 default = ["architecture-review", "deploy-checklist"]
 
 [commands]
-default = ["review", "challenge", "risk-check", "explain", "pre-deploy", "what-if-this-fails", "new-pack", "new-skill"]
+# Daily use — every engineer gets these
+default = ["review", "challenge", "risk-check", "explain", "pre-deploy", "what-if-this-fails"]
+
+# Contributor commands — installed but not highlighted in init output
+contributor = ["new-pack", "new-skill"]

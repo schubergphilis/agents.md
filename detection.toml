@@ -1,0 +1,20 @@
+[python]
+files = ["pyproject.toml", "setup.py", "requirements.txt"]
+pack = "python"
+
+[terraform]
+files = ["*.tf"]
+pack = "terraform"
+
+[github-actions]
+files = [".github/workflows/*.yml", ".github/workflows/*.yaml"]
+pack = "github-actions"
+depends = ["supply-chain"]
+
+[docker]
+files = ["Dockerfile", "docker-compose.yml", "docker-compose.yaml"]
+pack = "docker"
+
+[kubernetes]
+files = ["k8s/*.yaml", "kubernetes/*.yaml", "helm/Chart.yaml"]
+pack = "kubernetes"

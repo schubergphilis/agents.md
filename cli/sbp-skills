@@ -14,6 +14,26 @@ from pathlib import Path
 
 __version__ = "0.1.0"
 
+# ---------------------------------------------------------------------------
+# Repo root resolution — find where baseline/, packs/, skills/ live
+# ---------------------------------------------------------------------------
+
+_CACHE_DIR = Path.home() / ".cache" / "sbp-skills" / "repo"
+
+
+def get_repo_root() -> Path:
+    """Find the sbp-skills content root. Checks: parent of CLI, then cache dir."""
+    # When running from inside the repo (development)
+    dev_root = Path(__file__).resolve().parent.parent
+    if (dev_root / "baseline" / "AGENTS.md").exists():
+        return dev_root
+    # When installed via install.sh (content in cache)
+    if (_CACHE_DIR / "baseline" / "AGENTS.md").exists():
+        return _CACHE_DIR
+    # Fallback
+    print("Cannot find sbp-skills content. Run the installer or check ~/.cache/sbp-skills/repo/")
+    sys.exit(1)
+
 
 # ---------------------------------------------------------------------------
 # Configuration & TOML parsing
@@ -34,12 +54,13 @@ def parse_detection_toml(path: Path) -> dict:
 
 
 def parse_defaults_toml(path: Path) -> dict:
-    """Parse defaults.toml into {skills: [...], commands: [...]}."""
+    """Parse defaults.toml into {skills: [...], commands: [...], contributor_commands: [...]}."""
     with open(path, "rb") as f:
         raw = tomllib.load(f)
     return {
         "skills": raw.get("skills", {}).get("default", []),
         "commands": raw.get("commands", {}).get("default", []),
+        "contributor_commands": raw.get("commands", {}).get("contributor", []),
     }
 
 
@@ -428,7 +449,7 @@ def main():
         """Initialize sbp-skills in the current project."""
         project_dir = Path.cwd()
         home = Path.home()
-        repo_root = Path(__file__).resolve().parent.parent
+        repo_root = get_repo_root()
 
         # 1. Detect AI tools
         tools = detect_tools(home)
@@ -472,9 +493,10 @@ def main():
             render_claude_md(project_dir, repo_root, detected_packs)
             print("  Rendered CLAUDE.md")
 
-        # 6. Copy commands
+        # 6. Copy commands (daily-use + contributor)
         if "claude-code" in tools:
-            copy_commands(project_dir, repo_root, defaults["commands"], detected_packs)
+            all_commands = defaults["commands"] + defaults.get("contributor_commands", [])
+            copy_commands(project_dir, repo_root, all_commands, detected_packs)
             print(f"  Installed {len(defaults['commands'])} commands to .claude/commands/")
 
         # 7. Symlink skills
@@ -512,8 +534,9 @@ def main():
         save_manifest(project_dir, manifest)
         print("  Wrote .sbp/manifest.json")
 
-        print(f"\nRun 'sbp-skills list' to see available packs and skills.")
-        print(f"Run 'sbp-skills browse' to enable more.")
+        print(f"\nYour AI agent now thinks mission-critical.")
+        print(f"Try /review, /challenge, or /what-if-this-fails in your next session.")
+        print(f"Run 'sbp-skills list' to see all available skills.")
 
     p_init = subparsers.add_parser("init", help="Initialize sbp-skills in the current project")
     p_init.set_defaults(func=cmd_init)
@@ -522,7 +545,7 @@ def main():
         """Update sbp-skills to latest from central repo."""
         project_dir = Path.cwd()
         home = Path.home()
-        repo_root = Path(__file__).resolve().parent.parent
+        repo_root = get_repo_root()
 
         manifest = load_manifest(project_dir)
         if manifest is None:
@@ -585,7 +608,7 @@ def main():
     def cmd_list(args):
         """List available packs and skills."""
         project_dir = Path.cwd()
-        repo_root = Path(__file__).resolve().parent.parent
+        repo_root = get_repo_root()
 
         manifest = load_manifest(project_dir)
 
@@ -630,7 +653,7 @@ def main():
     def cmd_add(args):
         """Add a domain pack explicitly."""
         project_dir = Path.cwd()
-        repo_root = Path(__file__).resolve().parent.parent
+        repo_root = get_repo_root()
         pack_name = args.pack
 
         pack_dir = repo_root / "packs" / pack_name
@@ -670,7 +693,7 @@ def main():
     def cmd_remove(args):
         """Remove a domain pack."""
         project_dir = Path.cwd()
-        repo_root = Path(__file__).resolve().parent.parent
+        repo_root = get_repo_root()
         pack_name = args.pack
 
         manifest = load_manifest(project_dir)
@@ -699,7 +722,7 @@ def main():
     def cmd_enable(args):
         """Enable a skill."""
         home = Path.home()
-        repo_root = Path(__file__).resolve().parent.parent
+        repo_root = get_repo_root()
         skill_name = args.skill
 
         skill_dir = repo_root / "skills" / skill_name
@@ -756,7 +779,7 @@ def main():
     def cmd_doctor(args):
         """Health check."""
         home = Path.home()
-        repo_root = Path(__file__).resolve().parent.parent
+        repo_root = get_repo_root()
         project_dir = Path.cwd()
         ok = True
 
@@ -831,7 +854,7 @@ def main():
     def cmd_dev(args):
         """Scaffold a new pack or skill."""
         name = args.name
-        repo_root = Path(__file__).resolve().parent.parent
+        repo_root = get_repo_root()
 
         if args.pack:
             target = repo_root / "packs" / name
