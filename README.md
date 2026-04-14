@@ -134,22 +134,20 @@ Skills load on demand — they're not in context unless you invoke them. Pick wh
 
 | Skill | What it does |
 |-------|-------------|
-| **dependency-audit** | Analyze dependencies for bloat, supply-chain risk, and unused packages — with inline/replace/vendor recommendations |
-| **explain-codebase** | Deep explanation of unfamiliar code — traces data flow, names patterns, explains design decisions, flags risks |
+| **secure-code-review** | Security-focused review — auth, injection, secrets, dependencies, OWASP Top 10 |
+| **dependency-audit** | Analyze dependencies for bloat, supply-chain risk, and unused packages |
+| **explain-codebase** | Deep explanation of unfamiliar code — traces data flow, names patterns, explains design decisions |
+| **why-we-do-this** | Explain the reasoning behind SBP conventions — connects rules to real failure modes |
 
 **Running:**
 
 | Skill | What it does |
 |-------|-------------|
 | **deploy-checklist** (default) | Full pre-deployment verification — rollback readiness, monitoring, communication, GO/NO-GO decision |
-| **incident-review** | Blameless post-incident analysis — timeline, root cause (5 whys), contributing factors, concrete action items |
 | **safe-change** | Guided walkthrough for high-risk production changes — step-by-step with verification and rollback triggers |
-
-**Cross-cutting:**
-
-| Skill | What it does |
-|-------|-------------|
-| **why-we-do-this** | Explain the reasoning behind SBP conventions — connects rules to real failure modes, for skeptics and new joiners |
+| **incident-review** | Blameless post-incident analysis — timeline, root cause (5 whys), contributing factors, concrete action items |
+| **runbook-author** | Generate operational runbooks from code and infrastructure — optimized for the 3 AM scenario |
+| **observability-check** | Verify monitoring, alerting, and logging coverage across the four pillars |
 
 Enable a skill:
 
