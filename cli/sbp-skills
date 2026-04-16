@@ -101,7 +101,7 @@ TOOL_DIRS = {
     "copilot": {
         "marker": ".copilot",
         "skills_dir": None,
-        "commands_dir": None,
+        "commands_dir": ".github/copilot/prompts",
         "agent_file": ".github/copilot-instructions.md",
     },
     "opencode": {
@@ -350,6 +350,29 @@ def copy_commands(project_dir: Path, repo_root: Path, defaults: list,
                 shutil.copy2(cmd_file, commands_dir / cmd_file.name)
 
 
+def copy_copilot_prompts(project_dir: Path, repo_root: Path, defaults: list,
+                         detected_packs: set) -> int:
+    """Copy commands as .prompt.md files to .github/copilot/prompts/ for Copilot Chat."""
+    prompts_dir = project_dir / ".github" / "copilot" / "prompts"
+    prompts_dir.mkdir(parents=True, exist_ok=True)
+    count = 0
+
+    for cmd_name in defaults:
+        src = repo_root / "baseline" / "commands" / f"{cmd_name}.md"
+        if src.exists():
+            shutil.copy2(src, prompts_dir / f"{cmd_name}.prompt.md")
+            count += 1
+
+    for pack_name in sorted(detected_packs):
+        pack_cmds = repo_root / "packs" / pack_name / "commands"
+        if pack_cmds.is_dir():
+            for cmd_file in pack_cmds.glob("*.md"):
+                shutil.copy2(cmd_file, prompts_dir / f"{cmd_file.stem}.prompt.md")
+                count += 1
+
+    return count
+
+
 def link_skills(home: Path, repo_root: Path, skills: list, tool: str) -> None:
     """Symlink skills to the tool's skills directory."""
     tool_info = TOOL_DIRS.get(tool, {})
@@ -487,7 +510,7 @@ def main():
             render_claude_md(project_dir, repo_root, detected_packs)
             print("  Rendered CLAUDE.md")
 
-        # 5b. Render Copilot instructions (if Copilot detected)
+        # 5b. Render Copilot instructions and prompts (if Copilot detected)
         if "copilot" in tools:
             copilot_dir = project_dir / ".github"
             copilot_dir.mkdir(parents=True, exist_ok=True)
@@ -496,6 +519,11 @@ def main():
             agents_content = (project_dir / "AGENTS.md").read_text()
             copilot_file.write_text(agents_content)
             print("  Rendered .github/copilot-instructions.md")
+
+            # Copy commands as Copilot reusable prompts
+            all_copilot_cmds = defaults["commands"] + defaults.get("contributor_commands", [])
+            prompt_count = copy_copilot_prompts(project_dir, repo_root, all_copilot_cmds, detected_packs)
+            print(f"  Installed {prompt_count} prompts to .github/copilot/prompts/")
 
         # 6. Copy commands (daily-use + contributor)
         if "claude-code" in tools:
@@ -598,6 +626,10 @@ def main():
             agents_content = (project_dir / "AGENTS.md").read_text()
             copilot_file.write_text(agents_content)
             print("  Rendered .github/copilot-instructions.md")
+
+            all_copilot_cmds = defaults["commands"] + defaults.get("contributor_commands", [])
+            prompt_count = copy_copilot_prompts(project_dir, repo_root, all_copilot_cmds, detected_packs)
+            print(f"  Installed {prompt_count} prompts to .github/copilot/prompts/")
 
         all_skills = list(set(defaults["skills"]) | set(manifest.get("skills", {}).keys()))
         for tool_name in tools:
