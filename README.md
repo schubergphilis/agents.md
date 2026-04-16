@@ -1,10 +1,15 @@
 # sbp-skills
 
-Mission-critical cognitive autonomy for Schuberg Philis engineering teams.
+> "Agents today are brilliant, but they lack expertise."
+> — Barry Zhang & Mahesh Murag, Anthropic — [AI Engineer Code Summit](https://www.youtube.com/watch?v=CEvIs9y1uog)
 
-Turn every AI coding agent into a coworker that thinks like a senior SBP engineer — challenging assumptions, reviewing for failure modes, and teaching mission-critical practices through daily interaction.
+The industry is converging on a single insight: **stop building specialized agents — build Skills instead.** Intelligence without domain expertise is entertainment. The difference between a mediocre agent and an extraordinary one isn't the model — it's the knowledge you feed it.
 
-Works with **Claude Code**, **GitHub Copilot**, and **OpenCode**. Compatible with [skills.sh](https://skills.sh) and the [agentskills.io](https://agentskills.io) standard — use your own skills alongside these.
+Skills are folders with markdown files that encode your workflows, your conventions, your hard-won expertise. One generic agent + the right skills beats dozens of specialized agents. This works across all AI coding tools — Claude Code, GitHub Copilot, OpenCode, and any agent that reads markdown from the filesystem.
+
+**sbp-skills is our skills library.** It turns every AI coding agent into a coworker that thinks like a senior SBP engineer — challenging assumptions, reviewing for failure modes, and teaching mission-critical practices through daily interaction. Same skills, every tool, one standard.
+
+Works with **Claude Code**, **GitHub Copilot**, and **OpenCode**. Compatible with [skills.sh](https://skills.sh) and the [agentskills.io](https://agentskills.io) standard.
 
 ---
 
