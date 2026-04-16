@@ -1,0 +1,13 @@
+[pack]
+name = "dotnet"
+description = "Mission-critical .NET: central package management, NUnit, coverlet, file-scoped namespaces — auditable, testable, safe for production"
+version = "1.0.0"
+authors = ["Schuberg Philis"]
+
+[detect]
+files = ["*.sln", "*.csproj", "Directory.Packages.props"]
+
+[targets]
+agents_md = true
+claude_md = true
+commands = false
