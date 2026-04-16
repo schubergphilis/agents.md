@@ -5,6 +5,10 @@
 files = ["pyproject.toml", "setup.py", "requirements.txt"]
 pack = "python"
 
+[dotnet]
+files = ["*.sln", "*.csproj", "Directory.Packages.props"]
+pack = "dotnet"
+
 [supply-chain]
 files = [".github/workflows/*.yml", ".github/workflows/*.yaml"]
 pack = "supply-chain"
