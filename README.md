@@ -297,4 +297,6 @@ Just write a markdown file and place it in `baseline/commands/` (for everyone) o
 
 ## License
 
-MIT
+Apache License 2.0 — see [LICENSE](./LICENSE).
+
+**Exception:** `skills/sbp-brandbook/` is proprietary to Schuberg Philis and is **not** covered by the Apache 2.0 license. It has its own terms at [`skills/sbp-brandbook/LICENSE`](./skills/sbp-brandbook/LICENSE). The Schuberg Philis logo, wordmark, color palette, typography, and SVG brand assets may not be redistributed or used outside of work for Schuberg Philis. See [NOTICE](./NOTICE) for full details.

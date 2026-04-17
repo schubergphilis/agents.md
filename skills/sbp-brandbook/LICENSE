@@ -1,0 +1,51 @@
+SBP Brand Content License
+=========================
+
+Copyright (c) Schuberg Philis. All rights reserved.
+
+The content in this directory (`skills/sbp-brandbook/`), including but not
+limited to the SKILL.md instructions, SVG graphic assets in `assets/`, the
+Schuberg Philis logo, color system, typography specification, and any
+referenced brand guidelines, is the proprietary intellectual property of
+Schuberg Philis.
+
+This content is NOT covered by the Apache License 2.0 that applies to the
+rest of this repository. Those open-source terms do not extend to this
+directory.
+
+Permitted use
+-------------
+
+- Employees of Schuberg Philis may use these materials in the course of
+  their work for Schuberg Philis.
+- Authorized contractors and partners may use these materials solely for
+  the purpose of delivering work to Schuberg Philis under an applicable
+  agreement.
+- AI coding agents operating on behalf of the above users may load and
+  apply this skill when building assets for Schuberg Philis.
+
+Prohibited use without prior written permission from Schuberg Philis
+--------------------------------------------------------------------
+
+- Redistribution, sublicensing, rehosting, or public republishing of any
+  content from this directory outside of this repository.
+- Use of the Schuberg Philis logo, name, wordmark, color palette, or
+  visual system for any purpose unrelated to Schuberg Philis, including
+  personal projects, third-party products, or derivative brand systems.
+- Modification of the logo, color system, or typography in ways that
+  misrepresent the Schuberg Philis brand or imply endorsement.
+- Training, fine-tuning, or evaluation of external AI models on this
+  content.
+
+Trademarks
+----------
+
+"Schuberg Philis", the Schuberg Philis logo, and the SBP wordmark are
+trademarks of Schuberg Philis. Nothing in this repository grants any
+right to use those trademarks except as permitted above.
+
+Contact
+-------
+
+For licensing inquiries, partnership requests, or permission to use the
+brand outside the terms above, contact the Schuberg Philis marketing team.
