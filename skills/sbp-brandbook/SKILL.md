@@ -5,7 +5,14 @@ metadata:
   domain: brand
   lifecycle: build
   source: https://brandbook.schubergphilis.com/8d157b10c/p/142798-our-brand-book
+  license: proprietary
 ---
+
+> **License notice:** This skill and all assets under `assets/` are the
+> proprietary intellectual property of Schuberg Philis and are **not**
+> covered by the Apache 2.0 license that applies to the rest of this
+> repository. See `skills/sbp-brandbook/LICENSE` for terms. Do not
+> redistribute or use outside of work for Schuberg Philis.
 
 # SBP Brand — Full Spec
 

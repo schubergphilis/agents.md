@@ -1,0 +1,24 @@
+sbp-skills — License Notice
+===========================
+
+This repository is licensed under the Apache License, Version 2.0 (see
+LICENSE). The following exception applies:
+
+Proprietary content — excluded from the Apache 2.0 License
+----------------------------------------------------------
+
+`skills/sbp-brandbook/` — The Schuberg Philis brand skill, including
+the SKILL.md instructions and all SVG assets under `assets/`, is the
+proprietary intellectual property of Schuberg Philis. It is governed
+by its own license file at `skills/sbp-brandbook/LICENSE`, not by the
+Apache 2.0 License that covers the rest of this repository.
+
+Specifically, the Schuberg Philis logo, wordmark, color palette,
+typography specification, and graphic asset library are trademarks
+and proprietary visual assets of Schuberg Philis and may not be
+redistributed, rehosted, or used outside of work for Schuberg Philis
+without prior written permission.
+
+All other directories, files, and contributions to this repository
+are offered under the Apache License, Version 2.0 unless a directory
+contains its own LICENSE file stating otherwise.
