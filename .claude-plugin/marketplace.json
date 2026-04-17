@@ -43,7 +43,11 @@
         "./skills/explain-codebase",
         "./skills/agent-architecture-review",
         "./skills/why-we-do-this",
-        "./skills/feature-development"
+        "./skills/feature-development",
+        "./skills/debug-investigation",
+        "./skills/refactor",
+        "./skills/test-planning",
+        "./skills/test-authoring"
       ]
     },
     {
