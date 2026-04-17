@@ -10,6 +10,21 @@ At Schuberg Philis, that's not acceptable.
 
 We deliver 100% customer satisfaction and 100% quality on systems that run healthcare, finance, energy, and government. Our engineers don't just build software — they plan, build, and run it. The same person who writes the code is the one who gets paged when it breaks. That creates a way of thinking that no AI model has been trained on.
 
+## The industry is catching up
+
+At the AI Engineer Code Summit, Anthropic's Barry Zhang and Mahesh Murag told the industry to stop building agents and start building Skills. Their computing stack analogy: models are processors, agent runtimes are operating systems, and skills are applications. The application layer is where domain expertise lives — and it's portable across tools.
+
+This isn't just an Anthropic idea. Claude Code, GitHub Copilot, and OpenCode all read markdown skills from the filesystem. The [agentskills.io](https://agentskills.io) spec is becoming the common format. Write a skill once, use it in every tool.
+
+Their three categories of skills map directly to what we've built:
+- **Foundational skills** — general capabilities (our baseline)
+- **Partner skills** — technology-specific (our domain packs)
+- **Enterprise skills** — your organization's knowledge (our mission-critical thinking model)
+
+The key insight: institutional knowledge accumulates. When one engineer writes a skill or improves a pack, every agent in the organization gets better — regardless of which AI tool that engineer uses. Day 30 is measurably better than day 1.
+
+We didn't wait for the industry to tell us this. sbp-skills has been encoding SBP's mission-critical expertise into portable, composable skills from the start. But it's good to know we're on the right track.
+
 ## What we believe
 
 **The senior engineer's judgment should be portable.** When a senior SBP engineer reviews code, they ask questions that generic tools don't: "What's the blast radius? Who gets paged? Can we roll this back in 15 minutes? What happens when this dependency is unavailable?" That judgment shouldn't live only in people's heads. It should be available to every engineer, in every project, in every AI interaction.
