@@ -1,0 +1,58 @@
+{
+  "name": "sbp-skills",
+  "owner": {
+    "name": "Schuberg Philis",
+    "email": "jjverhoeks@schubergphilis.com"
+  },
+  "metadata": {
+    "description": "Mission-critical engineering skills by Schuberg Philis — operational excellence, security, and architectural review for AI coding agents",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "operations-skills",
+      "description": "Operational excellence skills for mission-critical systems — architecture review, deployment checklists, incident analysis, runbook authoring, observability verification, and safe change management",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/architecture-review",
+        "./skills/deploy-checklist",
+        "./skills/incident-review",
+        "./skills/observability-check",
+        "./skills/runbook-author",
+        "./skills/safe-change"
+      ]
+    },
+    {
+      "name": "security-skills",
+      "description": "Security skills for mission-critical systems — threat modeling, secure code review, and dependency auditing",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/threat-model",
+        "./skills/secure-code-review",
+        "./skills/dependency-audit"
+      ]
+    },
+    {
+      "name": "engineering-skills",
+      "description": "Cross-cutting engineering skills — codebase explanation, agent architecture review, and SBP engineering convention knowledge",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/explain-codebase",
+        "./skills/agent-architecture-review",
+        "./skills/why-we-do-this"
+      ]
+    },
+    {
+      "name": "brand-skills",
+      "description": "SBP visual brand identity — colors, typography, logo, stylization, grids, photography, iconography. Applies automatically to any UI, HTML, slide, or design asset built for Schuberg Philis.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/sbp-brandbook"
+      ]
+    }
+  ]
+}

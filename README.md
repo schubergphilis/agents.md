@@ -62,6 +62,29 @@ cp -r skills/deploy-checklist ~/.claude/skills/
 
 That's it. No tool required. The product is the content, not the CLI.
 
+### Option C: Claude Code plugin marketplace
+
+If you live in Claude Code, you can install skills as plugins — no CLI, no clone, no filesystem hop:
+
+```
+/plugin marketplace add schubergphilis/agents.md
+/plugin install operations-skills@sbp-skills
+/plugin install security-skills@sbp-skills
+/plugin install engineering-skills@sbp-skills
+/plugin install brand-skills@sbp-skills
+```
+
+Plugin groups available:
+
+| Plugin | Skills |
+|--------|--------|
+| **operations-skills** | architecture-review, deploy-checklist, incident-review, observability-check, runbook-author, safe-change |
+| **security-skills** | threat-model, secure-code-review, dependency-audit |
+| **engineering-skills** | explain-codebase, agent-architecture-review, why-we-do-this |
+| **brand-skills** | sbp-brandbook (SBP visual identity — colors, typography, logo, assets) |
+
+This is the preferred path for non-engineers and business users on Claude Code / Claude.ai who just want the skills without touching a terminal.
+
 ### Using skills from other sources
 
 sbp-skills follows the [agentskills.io](https://agentskills.io) standard. You can use skills from [skills.sh](https://skills.sh), from colleagues, or your own — just put them in `~/.claude/skills/` alongside these. Everything coexists.
@@ -148,6 +171,12 @@ Skills load on demand — they're not in context unless you invoke them. Pick wh
 | **incident-review** | Blameless post-incident analysis — timeline, root cause (5 whys), contributing factors, concrete action items |
 | **runbook-author** | Generate operational runbooks from code and infrastructure — optimized for the 3 AM scenario |
 | **observability-check** | Verify monitoring, alerting, and logging coverage across the four pillars |
+
+**Brand:**
+
+| Skill | What it does |
+|-------|-------------|
+| **sbp-brandbook** | Apply the SBP visual brand identity — colors, typography, logo, stylization, grids. Auto-triggers on any UI, HTML, slide, or design asset for Schuberg Philis. Bundles 22 brand SVGs (logos, slashes, squares, corners, buttons). |
 
 Enable a skill:
 
