@@ -42,7 +42,8 @@
       "skills": [
         "./skills/explain-codebase",
         "./skills/agent-architecture-review",
-        "./skills/why-we-do-this"
+        "./skills/why-we-do-this",
+        "./skills/feature-development"
       ]
     },
     {

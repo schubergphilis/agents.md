@@ -162,6 +162,7 @@ Skills load on demand — they're not in context unless you invoke them. Pick wh
 
 | Skill | What it does |
 |-------|-------------|
+| **feature-development** | Build a new feature using test-driven development — clarify requirements, plan test coverage, drive through red/green/refactor, integrate, and verify |
 | **secure-code-review** | Security-focused review — auth, injection, secrets, dependencies, OWASP Top 10 |
 | **dependency-audit** | Analyze dependencies for bloat, supply-chain risk, and unused packages |
 | **explain-codebase** | Deep explanation of unfamiliar code — traces data flow, names patterns, explains design decisions |
