@@ -157,11 +157,16 @@ Skills load on demand — they're not in context unless you invoke them. Pick wh
 | **architecture-review** (default) | Review systems for single points of failure, blast radius, rollback paths, observability gaps, operational readiness |
 | **threat-model** | Structured threat modeling — assets, threat actors, attack surfaces, mitigations, prioritized actions |
 | **agent-architecture-review** | Review multi-agent system designs against a three-layer reference model (guardian/orchestration/worker) |
+| **test-planning** | Design comprehensive test coverage before implementation — behaviors, boundary cases, failure modes, right test type for each |
 
 **Building:**
 
 | Skill | What it does |
 |-------|-------------|
+| **feature-development** | Build a new feature using test-driven development — clarify requirements, plan test coverage, drive through red/green/refactor, integrate, and verify |
+| **debug-investigation** | Systematically investigate, reproduce, and fix software bugs — frame symptoms, reliably reproduce, isolate the root cause, write a regression test, then fix |
+| **refactor** | Improve code structure without changing observable behavior — establish a safety net, plan small reversible steps, execute iteratively, validate no regressions |
+| **test-authoring** | Write tests that prove functionality works and catch regressions — structure each test clearly, exercise real behavior, keep the suite fast and reliable |
 | **secure-code-review** | Security-focused review — auth, injection, secrets, dependencies, OWASP Top 10 |
 | **dependency-audit** | Analyze dependencies for bloat, supply-chain risk, and unused packages |
 | **explain-codebase** | Deep explanation of unfamiliar code — traces data flow, names patterns, explains design decisions |
