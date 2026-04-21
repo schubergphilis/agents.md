@@ -51,6 +51,7 @@ The agent challenges before you've written a line. "What's the blast radius? Who
 | `architecture-review` | Single points of failure, observability, operational readiness |
 | `threat-model` | Attack surfaces, mitigations, risk matrix |
 | `agent-architecture-review` | Multi-agent system design against the three-layer model |
+| `design-first` | Understand the problem, explore alternatives, get alignment before building |
 
 ### Build
 
@@ -64,6 +65,7 @@ The agent auto-reviews its own output — silent failures, missing error handlin
 | `dependency-audit` | Supply-chain risk, bloat, unused packages |
 | `explain-codebase` | Deep dive into architecture, patterns, design decisions |
 | `why-we-do-this` | The reasoning behind SBP conventions |
+| `verify-before-done` | Prove it works before claiming it — evidence, not assertions |
 
 ### Run
 

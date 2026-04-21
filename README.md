@@ -158,6 +158,7 @@ Skills load on demand — they're not in context unless you invoke them. Pick wh
 | **threat-model** | Structured threat modeling — assets, threat actors, attack surfaces, mitigations, prioritized actions |
 | **agent-architecture-review** | Review multi-agent system designs against a three-layer reference model (guardian/orchestration/worker) |
 | **test-planning** | Design comprehensive test coverage before implementation — behaviors, boundary cases, failure modes, right test type for each |
+| **design-first** | Understand what you're building before you build it — clarify the problem, explore alternatives, assess blast radius, get alignment |
 
 **Building:**
 
@@ -171,6 +172,7 @@ Skills load on demand — they're not in context unless you invoke them. Pick wh
 | **dependency-audit** | Analyze dependencies for bloat, supply-chain risk, and unused packages |
 | **explain-codebase** | Deep explanation of unfamiliar code — traces data flow, names patterns, explains design decisions |
 | **why-we-do-this** | Explain the reasoning behind SBP conventions — connects rules to real failure modes |
+| **verify-before-done** | Prove your work is done before claiming it — run the command, read the output, show the evidence |
 
 **Running:**
 

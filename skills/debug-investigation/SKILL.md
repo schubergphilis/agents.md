@@ -54,6 +54,8 @@ Distinguish the *cause* from the *trigger*. The trigger is what makes it happen 
 
 Beware the first hypothesis that fits. Ask: does this explanation account for every symptom, including the ones that do not fit my first theory? If not, keep digging.
 
+If you have tried three or more fixes and none have worked, stop. You are likely treating symptoms, not the cause. Step back and question whether the architecture itself is the problem — a missing abstraction, a wrong boundary, a flawed assumption baked into the design. The fourth fix attempt on the wrong model will fail like the first three.
+
 ## Step 4: Write the regression test first
 
 Before writing the fix, write a test that reproduces the bug and fails because of it.
