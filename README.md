@@ -142,9 +142,10 @@ Packs activate automatically based on your project's files. They encode *how SBP
 | Pack | Auto-detected by | What it covers |
 |------|-----------------|----------------|
 | **python** | `pyproject.toml`, `setup.py`, `requirements.txt` | uv, ruff, pyright, pytest — auditable, testable Python for production |
+| **terraform** | `*.tf`, `terraform.tf`, `versions.tf` | Module layout, version ranges, `optional(…)`, curated outputs, `local.tags`, native `terraform test` |
 | **supply-chain** | `.github/workflows/*.yml` | Pin GitHub Actions to SHA — prevent compromised dependencies in CI/CD |
 
-More packs coming: terraform, kubernetes, docker, github-actions.
+More packs coming: kubernetes, docker, github-actions.
 
 ### Skills — deeper workflows for when you need them
 
@@ -182,6 +183,14 @@ Skills load on demand — they're not in context unless you invoke them. Pick wh
 | **runbook-author** | Generate operational runbooks from code and infrastructure — optimized for the 3 AM scenario |
 | **observability-check** | Verify monitoring, alerting, and logging coverage across the four pillars |
 
+**Terraform / MCAF:**
+
+| Skill | What it does |
+|-------|-------------|
+| **terraform** | Generic Terraform/OpenTofu authoring — module structure, variable + output design, block ordering, version pinning, native `terraform test`, CI/CD, security scanning, and state hygiene |
+| **mcaf-module** | Schuberg Philis MCAF-specific deltas (filenames, provider floors, `mcaf-github-workflows` reuse, `local.tags` with `ManagedBy`, release flow). Bundles `GUIDE.md`, the authoritative source |
+| **review-mcaf** | Qualitative MCAF module review that produces a good/bad/verdict markdown report; for many modules, dispatches parallel subagents and stitches one file |
+
 **Brand:**
 
 | Skill | What it does |
@@ -196,6 +205,104 @@ sbp-skills enable threat-model
 
 # Or manually — just copy the folder
 cp -r skills/threat-model ~/.claude/skills/
+```
+
+---
+
+## Terraform & MCAF
+
+Three-layer coverage for anything Terraform at Schuberg Philis — a daily-context pack plus three opt-in skills that stack on top of each other. You reach for whichever layer matches what you're doing.
+
+### How the layers stack
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│  packs/terraform/    always-on context (AGENTS.md, CLAUDE.md) │
+│                      → activated when any *.tf is in the repo │
+└───────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│  skills/terraform/     generic Terraform / OpenTofu baseline  │
+│          ↑ layered on top                                     │
+│  skills/mcaf-module/   MCAF-specific deltas (+ GUIDE.md)      │
+│          ↑ layered on top                                     │
+│  skills/review-mcaf/   qualitative good/bad/verdict review    │
+└───────────────────────────────────────────────────────────────┘
+```
+
+- The **pack** lives in `AGENTS.md` / `CLAUDE.md`, so baseline rules (file layout, version ranges, `local.tags`, curated outputs) are always in context when editing a Terraform repo.
+- The **skills** load on demand when the agent decides they apply, or when you explicitly invoke them. They contain the long-form reference material the pack points at.
+
+### What each piece covers
+
+| Piece | Type | Triggers on | What you get |
+|---|---|---|---|
+| **`packs/terraform`** | pack | `*.tf`, `terraform.tf`, `versions.tf` | Tight 276-word AGENTS.md fragment — layout, pinning, variable/output rules, tag pattern, acceptance criteria |
+| **`skills/terraform`** | skill | Any Terraform/OpenTofu authoring or review | Module structure, block ordering, `optional(…)`, testing decision matrix, CI/CD shape, security scanning, state hygiene. Includes `references/`: `module-patterns.md`, `code-patterns.md`, `testing.md`, `ci-cd.md`, `security-compliance.md`, `quick-reference.md` |
+| **`skills/mcaf-module`** | skill | `terraform-<provider>-mcaf-<name>` repos | MCAF deltas: `terraform.tf` not `versions.tf`, provider floors (AWS ≥6, Azurerm ≥4, …), `mcaf-github-workflows` reuse, `local.tags` with `ManagedBy`, native `terraform test` with `mock_provider`, conventional-commit labels, release-drafter flow, corpus-specific anti-patterns. Bundles **`GUIDE.md`** — the authoritative way-of-working distilled from 91 MCAF modules |
+| **`skills/review-mcaf`** | skill | "review this MCAF module", "is `terraform-<provider>-mcaf-<name>` any good?" | Qualitative review producing a good/bad/verdict markdown report. For multiple modules, dispatches parallel subagents and stitches one file |
+
+### Common workflows
+
+**Editing a Terraform repo (any org):**
+
+```bash
+# Inside a repo with *.tf files
+sbp-skills init       # → terraform pack auto-activates, AGENTS.md updated
+sbp-skills enable terraform   # optional: pull in the deep reference skill
+```
+
+**Authoring or reviewing an MCAF module:**
+
+```bash
+sbp-skills enable terraform
+sbp-skills enable mcaf-module
+# Now the agent knows the generic rules AND the MCAF-specific overlay,
+# with GUIDE.md bundled for citation.
+```
+
+Then in the agent: "create a new `terraform-aws-mcaf-<thing>` module" or "review this PR against MCAF rules". The `mcaf-module` skill applies automatically when it sees an MCAF repo name or file.
+
+**Running a qualitative MCAF review (single repo or many):**
+
+```bash
+sbp-skills enable review-mcaf
+```
+
+Then in the agent: `review this MCAF module` (current dir), or `review all MCAF modules in ./repos` (dispatches subagents and stitches a single report).
+
+### Layering rules
+
+- The pack contains the *minimum* set of rules every Terraform repo needs. Don't duplicate its content in the skills.
+- `mcaf-module` references `terraform` for anything generic — only the MCAF-specific *delta* lives there.
+- `review-mcaf` cites `../mcaf-module/GUIDE.md §N` for every rule it applies. It doesn't re-state rules; it tells the agent how to *apply* them.
+- `GUIDE.md` is the single source of truth for MCAF rules. Any new rule lands there first, then the skills reference it.
+
+### Keeping content current
+
+The Terraform + MCAF skills are developed in a separate repo (`mcaf-review`) while under active iteration — the corpus analysis, `GUIDE.md`, and the skills themselves live there. A one-command sync pulls the latest into this repo:
+
+```bash
+# Default source: ~/git/schuberg/mcaf-review
+scripts/sync-terraform-skills.sh
+
+# Custom source path
+MCAF_REVIEW_DIR=/path/to/mcaf-review scripts/sync-terraform-skills.sh
+
+# Dry-run — show drift without writing
+scripts/sync-terraform-skills.sh --check
+```
+
+The script is idempotent. It copies the three skills + `GUIDE.md` and rewrites a handful of `GUIDE.md` path references in `review-mcaf`/`mcaf-module` so cross-skill links resolve once they're symlinked as siblings under `~/.claude/skills/`. See [`scripts/README.md`](scripts/README.md) for details.
+
+**Source-of-truth rule:**
+
+- Generic Terraform + MCAF content (skills + `GUIDE.md`) → edit in `mcaf-review`, run the sync script.
+- The `terraform` *pack* (AGENTS.md / CLAUDE.md / manifest) → edit directly in this repo; not synced from anywhere.
+
+Validate after any sync or manual edit:
+
+```bash
+python3 cli/sbp-skills validate packs/terraform skills/terraform skills/mcaf-module skills/review-mcaf
 ```
 
 ---

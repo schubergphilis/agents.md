@@ -13,11 +13,11 @@ pack = "dotnet"
 files = [".github/workflows/*.yml", ".github/workflows/*.yaml"]
 pack = "supply-chain"
 
+[terraform]
+files = ["*.tf", "terraform.tf", "versions.tf"]
+pack = "terraform"
+
 # Uncomment when packs are created:
-# [terraform]
-# files = ["*.tf"]
-# pack = "terraform"
-#
 # [docker]
 # files = ["Dockerfile", "docker-compose.yml", "docker-compose.yaml"]
 # pack = "docker"
