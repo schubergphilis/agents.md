@@ -1,69 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
-  <meta name="refresh" content="60">
-  <meta name="retry-after" content="100">
-  <meta name="robots" content="noindex, nofollow, noarchive, nostore">
-  <meta name="cache-control" content="no-cache, no-store">
-  <meta name="pragma" content="no-cache">
-<title>403 Forbidden - You are not allowed to access this page.</title>
-  <style>
-    body {
-      color: #666;
-      text-align: center;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      margin: auto;
-      font-size: 14px;
-    }
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #082646;
+      }
 
-    h1 {
-      font-size: 56px;
-      line-height: 100px;
-      font-weight: 400;
-      color: #456;
-    }
+      .cls-1, .cls-2 {
+        fill-rule: evenodd;
+      }
 
-    h2 {
-      font-size: 24px;
-      color: #666;
-      line-height: 1.5em;
-    }
-
-    h3 {
-      color: #456;
-      font-size: 20px;
-      font-weight: 400;
-      line-height: 28px;
-    }
-
-    hr {
-      max-width: 800px;
-      margin: 18px auto;
-      border: 0;
-      border-top: 1px solid #EEE;
-      border-bottom: 1px solid white;
-    }
-
-    img {
-      max-width: 40vw;
-    }
-
-    .container {
-      margin: auto 20px;
-    }
-  </style>
-</head>
-
-<body>
-  <h1>
-    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEwIiBoZWlnaHQ9IjIxMCIgdmlld0JveD0iMCAwIDIxMCAyMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEwNS4wNjE0IDIwMy42NTVsMzguNjQtMTE4LjkyMWgtNzcuMjhsMzguNjQgMTE4LjkyMXoiIGZpbGw9IiNlMjQzMjkiLz4KICA8cGF0aCBkPSJNMTA1LjA2MTQgMjAzLjY1NDhsLTM4LjY0LTExOC45MjFoLTU0LjE1M2w5Mi43OTMgMTE4LjkyMXoiIGZpbGw9IiNmYzZkMjYiLz4KICA8cGF0aCBkPSJNMTIuMjY4NSA4NC43MzQxbC0xMS43NDIgMzYuMTM5Yy0xLjA3MSAzLjI5Ni4xMDIgNi45MDcgMi45MDYgOC45NDRsMTAxLjYyOSA3My44MzgtOTIuNzkzLTExOC45MjF6IiBmaWxsPSIjZmNhMzI2Ii8+CiAgPHBhdGggZD0iTTEyLjI2ODUgODQuNzM0Mmg1NC4xNTNsLTIzLjI3My03MS42MjVjLTEuMTk3LTMuNjg2LTYuNDExLTMuNjg1LTcuNjA4IDBsLTIzLjI3MiA3MS42MjV6IiBmaWxsPSIjZTI0MzI5Ii8+CiAgPHBhdGggZD0iTTEwNS4wNjE0IDIwMy42NTQ4bDM4LjY0LTExOC45MjFoNTQuMTUzbC05Mi43OTMgMTE4LjkyMXoiIGZpbGw9IiNmYzZkMjYiLz4KICA8cGF0aCBkPSJNMTk3Ljg1NDQgODQuNzM0MWwxMS43NDIgMzYuMTM5YzEuMDcxIDMuMjk2LS4xMDIgNi45MDctMi45MDYgOC45NDRsLTEwMS42MjkgNzMuODM4IDkyLjc5My0xMTguOTIxeiIgZmlsbD0iI2ZjYTMyNiIvPgogIDxwYXRoIGQ9Ik0xOTcuODU0NCA4NC43MzQyaC01NC4xNTNsMjMuMjczLTcxLjYyNWMxLjE5Ny0zLjY4NiA2LjQxMS0zLjY4NSA3LjYwOCAwbDIzLjI3MiA3MS42MjV6IiBmaWxsPSIjZTI0MzI5Ii8+Cjwvc3ZnPgo=" alt="GitLab Logo" /><br />
-    403 Forbidden - You are not allowed to access this page.
-  </h1>
-  <div class="container">
-    <h3>Access to Gitlab is not allowed from your IP-address: <strong>95.142.96.53</strong></h3>
-    <hr />
-    <p>Please contact your GitLab administrator for more information.</p>
-  </div>
-</body>
-</html>
+      .cls-2 {
+        fill: none;
+        stroke: #1ee8ed;
+        stroke-miterlimit: 10;
+        stroke-width: 2px;
+      }
+    </style>
+  </defs>
+  <path id="Fill-16" class="cls-1" d="M983.23,1056.71c1.55,7.73-3.09,10.82-9.27,10.82h-431.68c-26.27,0-40.17-7.73-50.99-40.17L162.17,69.35c-1.55-6.18,0-10.82,6.18-10.82h433.22c23.18,0,40.17,7.73,50.99,40.17l330.66,958"/>
+  <path id="Fill-16-2" data-name="Fill-16" class="cls-2" d="M917.84,1011.65c1.55,7.73-3.09,10.82-9.27,10.82h-431.68c-26.27,0-40.17-7.73-50.99-40.17L96.78,24.29c-1.55-6.18,0-10.82,6.18-10.82h433.22c23.18,0,40.17,7.73,50.99,40.17l330.66,958"/>
+</svg>
