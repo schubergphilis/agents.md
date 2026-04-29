@@ -5,34 +5,64 @@
 
 ## Block ordering in a resource
 
+Empty lines separate each group. Within the third group, the identifier comes first, followed by alphabetically sorted other fields, then `tags`.
+
 ```hcl
 resource "aws_s3_bucket" "default" {
-  # 1. Meta-args
+  # 1. Meta-args: count / for_each (kept on top even when written as a block)
   for_each = var.buckets
 
-  # 2. Identifying args
-  bucket        = each.key
-  bucket_prefix = each.value.prefix
+  # 2. Meta-arg: provider
+  provider = aws.replica
 
-  # 3. Core config
-  force_destroy = each.value.force_destroy
-
-  # 4. Feature flags
+  # 3. region, identifier, alphabetically sorted other fields, then tags
+  bucket              = each.key
+  bucket_prefix       = each.value.prefix
+  force_destroy       = each.value.force_destroy
   object_lock_enabled = each.value.object_lock_mode != null
+  tags                = var.tags
 
-  # 5. Nested blocks
+  # 4. Nested blocks (each separated by empty lines)
   grant {
+    id          = each.value.owner_id
     permissions = ["FULL_CONTROL"]
     type        = "CanonicalUser"
-    id          = each.value.owner_id
   }
 
-  # 6. Tags (always last data arg)
-  tags = var.tags
-
-  # 7. Meta-blocks: lifecycle / depends_on
+  # 5. Meta-arg blocks: depends_on / lifecycle
   lifecycle {
     prevent_destroy = each.value.protected
+  }
+}
+```
+
+## Block ordering in a module
+
+Empty lines separate each group. Within the fourth group, the identifier comes first, followed by alphabetically sorted other fields, then `tags`.
+
+```hcl
+module "logging_bucket" {
+  # 1. Meta-args: count / for_each
+  for_each = var.buckets
+
+  # 2. Meta-args: source / version
+  source  = "schubergphilis/s3/aws"
+  version = "~> 1.0"
+
+  # 3. Meta-arg: providers
+  providers = {
+    aws = aws.replica
+  }
+
+  # 4. region, identifier, alphabetically sorted other fields, then tags
+  name          = each.key
+  force_destroy = each.value.force_destroy
+  versioning    = true
+  tags          = var.tags
+
+  # 5. Nested blocks (each separated by empty lines)
+  lifecycle {
+    prevent_destroy = true
   }
 }
 ```

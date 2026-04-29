@@ -181,15 +181,13 @@ Then downstream outputs that expose IDs/ARNs other modules reference (VPC IDs, s
 
 ### Resource argument ordering
 
-Inside a `resource` block, arrange arguments in this order:
+Inside a `resource` block, arrange arguments in this order. Empty lines separate each group:
 
-1. `provider = …` / `for_each = …` / `count = …` (meta-args first when present)
-2. Identifying arguments — whatever the provider uses as the primary identity (`name`, `bucket`, `bucket_prefix`, `resource_group_name`, `location`)
-3. Core configuration arguments (type, tier, size, encryption, …)
-4. Feature-flag arguments (booleans toggling optional behaviour)
-5. Nested blocks
-6. `tags = var.tags` (always last before the closing brace)
-7. `lifecycle { … }` / `depends_on = [...]` (meta-blocks last)
+1. `count` / `for_each` — meta-args first; even when written as a block, keep on top.
+2. `provider`.
+3. `region`, identifier (`name`, `role`, `bucket`, `resource_group_name`, …), then **alphabetically sorted** other fields, then `tags`.
+4. Nested blocks (each separated by empty lines).
+5. Meta-argument blocks: `depends_on`, `lifecycle`.
 
 ```hcl
 resource "aws_s3_bucket" "default" {
@@ -200,6 +198,17 @@ resource "aws_s3_bucket" "default" {
   tags                = var.tags
 }
 ```
+
+### Module argument ordering
+
+Inside a `module` block, arrange arguments in this order. Empty lines separate each group:
+
+1. `count` / `for_each`.
+2. `source`, `version`.
+3. `providers`.
+4. `region`, identifier (`name`, …), then **alphabetically sorted** other fields, then `tags`.
+5. Nested blocks (each separated by empty lines).
+6. Meta-argument blocks: `depends_on`, `lifecycle`.
 
 ### README section order
 

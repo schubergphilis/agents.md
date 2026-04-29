@@ -150,13 +150,24 @@ Rules:
 
 ## Resource argument ordering inside a block
 
-1. Meta-args: `provider`, `for_each`, `count`.
-2. Identifying args: `name`, `resource_group_name`, `bucket`, `location`.
-3. Core config: sku, type, tier, sizes, encryption.
-4. Feature flags (booleans).
-5. Nested blocks.
-6. `tags = var.tags` (always last before closing brace).
-7. `lifecycle {}` / `depends_on` (meta-blocks last).
+Empty lines separate each group:
+
+1. `count` / `for_each` — meta-args first; even when written as a block, keep on top.
+2. `provider`.
+3. `region`, identifier (`name`, `bucket`, `resource_group_name`, `location`, …), then **alphabetically sorted** other fields, then `tags`.
+4. Nested blocks (each separated by empty lines).
+5. Meta-argument blocks: `depends_on`, `lifecycle`.
+
+## Module argument ordering inside a block
+
+Empty lines separate each group:
+
+1. `count` / `for_each`.
+2. `source`, `version`.
+3. `providers`.
+4. `region`, identifier (`name`, …), then **alphabetically sorted** other fields, then `tags`.
+5. Nested blocks (each separated by empty lines).
+6. Meta-argument blocks: `depends_on`, `lifecycle`.
 
 ## Resource labels
 
