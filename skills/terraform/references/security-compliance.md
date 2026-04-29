@@ -102,9 +102,10 @@ resource "aws_secretsmanager_secret_version" "db" {
 
 ## Provider version pinning as a security practice
 
-- Patch updates to providers often fix security issues. **Floor-with-range** (`>= 6.0, < 7.0`) lets callers pick up patches automatically.
+- Patch updates to providers often fix security issues. A floor-only constraint (`>= 6`) lets callers pick up patches automatically.
+- Some providers (e.g. Azurerm, Datadog) need an upper bound at the next major to avoid unreviewed breaking changes.
 - **Exact pinning** (`= 6.1.2`) in a module blocks callers from getting security fixes.
-- **Floating major-ceiling** (`>= 6.0`) accepts breaking-change releases unreviewed — mildly dangerous.
+- The exact floor number is not important — focus on the constraint shape (floor-only vs floor + ceiling).
 
 ## Supply-chain hygiene for modules
 

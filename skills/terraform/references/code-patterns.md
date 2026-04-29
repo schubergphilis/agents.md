@@ -28,7 +28,7 @@ resource "aws_s3_bucket" "default" {
   }
 
   # 6. Tags (always last data arg)
-  tags = local.tags
+  tags = var.tags
 
   # 7. Meta-blocks: lifecycle / depends_on
   lifecycle {
@@ -132,10 +132,13 @@ resource "azurerm_private_endpoint" "default" {
 
 ## Version management
 
+The exact floor number is not important — what matters is the **constraint shape**: floor-only for Terraform (no upper bound), and the correct presence or absence of an upper bound for each provider.
+
 ### In a module
 
-- `required_version = ">= 1.9"` — floor only, no upper bound.
-- Providers as `>= X.Y, < (X+1).0` — range with a major ceiling.
+- `required_version = ">= X.Y"` — floor only, no upper bound on Terraform itself.
+- Most providers: floor only (`>= X`), no upper bound.
+- Some providers require an upper bound at the next major (`>= X, < (X+1)`). Check the MCAF skill for which providers need this.
 - Never `= X.Y.Z` (exact) in a module.
 - Avoid `~> X.Y.Z` (patch-tight) — blocks patches.
 

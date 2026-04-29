@@ -7,9 +7,9 @@ Mission-critical Terraform/OpenTofu conventions for Schuberg Philis projects.
 - **Module layout** — `terraform.tf` over `versions.tf`, examples under `examples/`, native tests under `tests/`
 - **Version pinning** — floor-only `required_version`, provider version ranges (never exact or patch-tight)
 - **Variable/output design** — `type` + `description` on every var, `optional(…)` over flat sprawl, curated outputs, `sensitive = true` on secrets
-- **Tag hygiene** — `locals.tags = merge(var.tags, { ManagedBy = "Terraform" })`
+- **Tag hygiene** — `variable "tags"`. Referencing `var.tags` on every taggable resource.
 - **Testing** — native `terraform test` with `mock_provider`
-- **Security** — checkov/tfsec/trivy in pre-commit + CI, no plaintext secret defaults
+- **Security** — checkov in pre-commit + CI, no plaintext secret defaults
 
 ## Auto-detected by
 

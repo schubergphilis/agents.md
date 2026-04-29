@@ -91,16 +91,15 @@ Walk each dimension for every module. Note concrete findings — cite variable/r
    - Minimum useful surface — not every attribute re-exported.
 5. **Tags** —
    - `variable "tags"` defaults to `{}` (not `null`).
-   - `local.tags = merge(var.tags, { ManagedBy = "Terraform" })` pattern.
-   - Every taggable resource uses `local.tags`.
+   - Every taggable resource references `var.tags`. No `local.tags` indirection unless the module genuinely needs to inject extra tags.
    - No `try(var.tags)` cargo-cult.
    - No hard-coded tag keys buried inside individual resources.
 6. **Examples** — `examples/default/` present; additional examples cover major feature branches; each is valid HCL; no ad-hoc `## Usage` HCL blob in README.
 7. **Tests** — native `terraform test` with `mock_provider`; multiple `run` blocks per behaviour; `expect_failures` for negative paths; tests assert on *derived* values (not just re-echoing defaults).
 8. **CI & pre-commit** — five standard workflows from `mcaf-github-workflows` with the `DO NOT CHANGE` header intact; no hand-edits; pre-commit config includes the core hooks.
 9. **Lifecycle / currency** —
-   - Terraform `required_version` allows the newest Terraform (no upper bound).
-   - AWS `>= 6`, Azurerm `>= 4`, AzureAD `>= 3`, Datadog `>= 3`.
+   - Terraform `required_version` allows the newest Terraform (no upper bound). The exact floor is not important — just verify the constraint shape.
+   - AWS `>= 6` (no upper bound). AzureAD `>= 3, < 4`, Azurerm `>= 4, < 5`, Datadog `>= 3, < 4` (upper bound at next major). Don't bikeshed the minor; focus on whether the bounds are correct.
    - No exact or patch-tight provider pins.
    - No deprecated HCL or deprecated provider resources.
    - No action pins older than current (`setup-terraform@v3`, `checkout@v4`, `github-script@v7`, `terraform-docs/gh-actions@v1.3.0`).

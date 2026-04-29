@@ -20,7 +20,7 @@
 | `main.tf` | Primary resources | |
 | `variables.tf` | All inputs with `type` + `description` | For large modules, split by domain: `variables.network.tf`, `variables.security.tf` |
 | `outputs.tf` | All outputs with `description` | |
-| `terraform.tf` | `required_version` + `required_providers` | Some codebases call this `versions.tf`; pick one and stick with it |
+| `terraform.tf` | `required_version` + `required_providers` | Some codebases call this `versions.tf`; pick `terraform.tf` |
 | `locals.tf` | Only if non-empty | |
 | `data.tf` | Only if non-empty | |
 | `README.md` | Prose + terraform-docs injection | |
@@ -132,29 +132,20 @@ Mark credential, token, kubeconfig, connection-string outputs `sensitive = true`
 
 ## Tags
 
-Centralise via locals:
+Reference `var.tags` directly on every taggable resource:
 
 ```hcl
-# locals.tf
-locals {
-  tags = merge(var.tags, {
-    ManagedBy = "Terraform"
-    Module    = "terraform-aws-mcaf-s3"  # optional but useful for provenance
-  })
-}
-
-# main.tf
 resource "aws_s3_bucket" "default" {
   # ...
-  tags = local.tags
+  tags = var.tags
 }
 ```
 
 Rules:
 
 - `variable "tags" { type = map(string); default = {} }`.
-- `local.tags = merge(var.tags, {...})`.
-- Reference `local.tags` on every taggable resource. Never hard-code a tag key inside a single resource block.
+- Reference `var.tags` on every taggable resource. No `local.tags` indirection unless the module genuinely needs to inject extra tags.
+- Never hard-code a tag key inside a single resource block.
 - Skip `try(var.tags, {})` — useless when the var has a default.
 
 ## Resource argument ordering inside a block
@@ -164,7 +155,7 @@ Rules:
 3. Core config: sku, type, tier, sizes, encryption.
 4. Feature flags (booleans).
 5. Nested blocks.
-6. `tags = local.tags` (always last before closing brace).
+6. `tags = var.tags` (always last before closing brace).
 7. `lifecycle {}` / `depends_on` (meta-blocks last).
 
 ## Resource labels

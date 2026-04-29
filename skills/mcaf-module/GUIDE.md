@@ -65,11 +65,12 @@ terraform {
 
 **Rules:**
 
-- `required_version` — set a **minimum** with `>=`, no upper bound on Terraform itself. The current MCAF floor is **`>= 1.9`** (37% of modules; growing). Anything below `>= 1.7` is legacy and should be bumped next touch.
-- Provider `version` — express both floor and ceiling as **`>= X.Y, < (X+1).0`**. Pinning only with `~>` is accepted but less common. Do NOT pin to an exact version in a module.
-- AWS provider floor is **`>= 6.0`** (adoption: 19/47 AWS modules already on 6.x, another 13 on 5.x with stated intent to bump).
-- Azure provider floor is **`>= 4.0`** (adoption: 18/39 Azure modules).
-- Datadog provider floor is **`>= 3.39`**.
+The exact floor number is not important — what matters is the **bounds**: a floor-only constraint for Terraform and most providers (no upper bound), and a major-version range for AzureAD, Azurerm, and Datadog (floor + upper bound at the next major). Don't bikeshed the minor; just ensure the constraint shape is correct.
+
+- `required_version` — set a **minimum** with `>=`, no upper bound on Terraform itself. Any floor is acceptable (e.g. `">= 1.9"`).
+- Provider `version` — floor-only for most providers; floor + upper bound at the next major for AzureAD, Azurerm, and Datadog. Do NOT pin to an exact version in a module.
+- AWS: `>= 6` (no upper bound).
+- AzureAD: `>= 3, < 4`. Azurerm: `>= 4, < 5`. Datadog: `>= 3, < 4`. Upper bound at the next major.
 - Every provider block lists `source` explicitly, even for hashicorp providers.
 
 ---
@@ -187,7 +188,7 @@ Inside a `resource` block, arrange arguments in this order:
 3. Core configuration arguments (type, tier, size, encryption, …)
 4. Feature-flag arguments (booleans toggling optional behaviour)
 5. Nested blocks
-6. `tags = local.tags` (always last before the closing brace)
+6. `tags = var.tags` (always last before the closing brace)
 7. `lifecycle { … }` / `depends_on = [...]` (meta-blocks last)
 
 ```hcl
@@ -196,7 +197,7 @@ resource "aws_s3_bucket" "default" {
   bucket_prefix       = var.name_prefix
   force_destroy       = var.force_destroy
   object_lock_enabled = var.object_lock_mode != null
-  tags                = local.tags
+  tags                = var.tags
 }
 ```
 
@@ -255,23 +256,17 @@ output "arn" {
 ## 5. Tags (AWS / Azure)
 
 ```hcl
-# locals.tf
-locals {
-  tags = merge(var.tags, { ManagedBy = "Terraform" })
-}
-
-# main.tf
 resource "aws_s3_bucket" "default" {
   ...
-  tags = local.tags
+  tags = var.tags
 }
 ```
 
 **Rules:**
 
-- Expose `variable "tags"` with `type = map(string)` and `default = {}`. **67%** of modules do this; it should be universal.
-- Only **26%** currently merge via `locals.tags`. That is the right pattern — it lets the module add mandatory tags (`ManagedBy`, `Module`, etc.) without clobbering caller tags. Adopt it in new code.
-- Do not hard-code tag keys inside individual resources — always reference `local.tags`.
+- Expose `variable "tags"` with `type = map(string)` and `default = {}`. This should be universal.
+- Every taggable resource references `var.tags`. No `try(var.tags)` cargo-cult. No `local.tags` indirection unless the module genuinely needs to inject extra tags.
+- Do not hard-code tag keys inside individual resources.
 
 ---
 
@@ -363,47 +358,7 @@ run "default" {
 
 ## 9. Pre-commit
 
-92% of modules ship this exact `.pre-commit-config.yaml`:
-
-```yaml
-default_stages: [pre-commit]
-repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-      - id: check-json
-      - id: check-merge-conflict
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-      - id: pretty-format-json
-        args: [--autofix]
-      - id: detect-aws-credentials
-        args: [--allow-missing-credentials]
-      - id: detect-private-key
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.98.1
-    hooks:
-      - id: terraform_fmt
-      - id: terraform_tflint
-      - id: terraform_docs
-      - id: terraform_validate
-  - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 3.2.388
-    hooks:
-      - id: checkov
-        verbose: false
-        args:
-          - --download-external-modules
-          - "true"
-          - --quiet
-          - --compact
-          - --skip-check
-          - CKV_GIT_5,CKV_GLB_1,CKV_TF_1
-          - --skip-path
-          - examples/*
-```
+The canonical config is maintained in [`mcaf-github-workflows/sync-root/.pre-commit-config.yaml`](https://github.com/schubergphilis/mcaf-github-workflows/blob/main/sync-root/.pre-commit-config.yaml). Read the repository's copy for exact hooks and versions. Do not hardcode or duplicate the config here.
 
 **Skipped checkov checks (by policy):**
 
@@ -638,7 +593,7 @@ Use `terraform-aws-mcaf-s3` as the reference implementation for AWS and `terrafo
 Ten things that the structural checklist does not catch but which appear across the corpus. Use this list as the qualitative checklist when reviewing a module.
 
 1. **Whole-resource outputs that leak state** — `output "resource" { value = aws_kubernetes_cluster.this }` re-exports every attribute including sensitive ones (`kube_admin_config`, `admin_password`). Always expose a curated set of named outputs. Mark any credential/token output `sensitive = true`.
-2. **`try(var.tags)` cargo-culted** — `var.tags` defaults to `{}`; a `try()` around it is noise, and worse, masks real type errors. Drop it and use the `local.tags` merge from §5.
+2. **`try(var.tags)` cargo-culted** — `var.tags` defaults to `{}`; a `try()` around it is noise, and worse, masks real type errors. Drop it and use `var.tags` directly (§5).
 3. **Two sources of truth for resource group** — Azure modules that take both `var.resource_group_name` AND `var.<obj>.resource_group_name` and `count`-toggle an internal `azurerm_resource_group.this`. Standardise on caller-owned RG; never create one inside a reusable module.
 4. **Hard-pinned child-module refs** — `source = "github.com/schubergphilis/...?ref=vX.Y.Z"` inside a module propagates that version to every consumer. Use registry semver ranges (`schubergphilis/<name>/<provider>` + `version = "~> X.Y"`) instead.
 5. **Missing `outputs.tf` entirely** — several modules ship no outputs and become black boxes. Every module producing a resource MUST expose at least `id`/`arn`/`name` (§4).
@@ -664,5 +619,5 @@ Bug classes worth explicit spot-checks during review (observed in the corpus at 
 Clone the structure of these when starting something new:
 
 - **AWS**: `terraform-aws-mcaf-s3` (full-surface), `terraform-aws-mcaf-kms` (thin wrapper).
-- **Azure**: `terraform-azure-mcaf-storage-account` (full-surface), `terraform-azure-mcaf-container-app-environment` (one of the few with correct `local.tags` pattern + native tests).
+- **Azure**: `terraform-azure-mcaf-storage-account` (full-surface), `terraform-azure-mcaf-container-app-environment` (correct `var.tags` usage + native tests).
 - **GitHub/TFE/GitLab**: `terraform-github-mcaf-repository` (the highest-quality module in the corpus).

@@ -21,35 +21,7 @@ Ship layers 1–6 on every PR. Layer 7 only when you actually need to verify rea
 
 ## Layer 1-4: pre-commit + CI
 
-Ship a `.pre-commit-config.yaml`:
-
-```yaml
-default_stages: [pre-commit]
-repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-      - id: check-json
-      - id: check-merge-conflict
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: detect-aws-credentials
-        args: [--allow-missing-credentials]
-      - id: detect-private-key
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.98.1
-    hooks:
-      - id: terraform_fmt
-      - id: terraform_tflint
-      - id: terraform_docs
-      - id: terraform_validate
-  - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 3.2.388
-    hooks:
-      - id: checkov
-        args: [--quiet, --compact, --skip-path, "examples/*"]
-```
+Ship a `.pre-commit-config.yaml` with hooks for formatting, linting, validation, docs generation, and security scanning (e.g. checkov). The canonical config is maintained in [`mcaf-github-workflows/sync-root/.pre-commit-config.yaml`](https://github.com/schubergphilis/mcaf-github-workflows/blob/main/sync-root/.pre-commit-config.yaml) — read the repository's copy for exact hooks and versions.
 
 Run the same tools in CI. No exceptions that are only in local. No exceptions that are only in CI.
 

@@ -78,14 +78,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.0, < 7.0"  # range, not exact
+      version = ">= 6.0"            # floor only for AWS; some providers need an upper bound
     }
   }
 }
 ```
 
-- `required_version` floor-only with `>=`. No upper bound on Terraform.
-- Provider `version` expressed as `>= X.Y, < (X+1).0`. Never `= X.Y.Z` (exact) in a reusable module.
+- `required_version` floor-only with `>=`. No upper bound on Terraform. The exact floor is not important — focus on the constraint shape.
+- Provider `version` — floor-only for most providers (no upper bound). Some providers need an upper bound at the next major. Never `= X.Y.Z` (exact) in a reusable module.
 - Patch-tight (`~> X.Y.Z`) is almost always wrong — it blocks security patches.
 
 ### 4. Variables
@@ -132,20 +132,14 @@ Rules:
 ### 6. Tags (cloud providers that support them)
 
 ```hcl
-# locals.tf
-locals {
-  tags = merge(var.tags, { ManagedBy = "Terraform" })
-}
-
-# main.tf
 resource "aws_s3_bucket" "default" {
   # ...
-  tags = local.tags
+  tags = var.tags
 }
 ```
 
 - Expose `variable "tags"` as `map(string)` with `default = {}`.
-- Centralise the merge in `locals.tags`. Never hard-code tag keys in individual resources.
+- Reference `var.tags` on every taggable resource. No `local.tags` indirection unless the module genuinely needs to inject extra tags.
 - Drop `try(var.tags, {})` noise — `var.tags` has a default, `try()` around it hides type errors.
 
 ### 7. Testing

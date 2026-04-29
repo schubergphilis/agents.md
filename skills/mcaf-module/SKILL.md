@@ -1,6 +1,6 @@
 ---
 name: mcaf-module
-description: Author or structurally review a Schuberg Philis MCAF Terraform module (`terraform-<provider>-mcaf-<name>`). Use when creating a new MCAF module, modifying an existing one, or reviewing a PR against one. This skill layers MCAF-specific rules on top of the generic `terraform` skill — start there for baseline guidance (module layout, variable/output design, testing, CI, security) and come here for the Schuberg Philis specifics (`terraform.tf` not `versions.tf`, reuse of `mcaf-github-workflows`, `local.tags` with `ManagedBy`, native `terraform test` with `mock_provider`, conventional-commit PR labels, release-drafter flow, and the recurring anti-patterns observed across the 91-module corpus). For a full qualitative review producing good/bad/verdict reports, use the `review-mcaf` skill instead.
+description: Author or structurally review a Schuberg Philis MCAF Terraform module (`terraform-<provider>-mcaf-<name>`). Use when creating a new MCAF module, modifying an existing one, or reviewing a PR against one. This skill layers MCAF-specific rules on top of the generic `terraform` skill — start there for baseline guidance (module layout, variable/output design, testing, CI, security) and come here for the Schuberg Philis specifics (`terraform.tf` not `versions.tf`, reuse of `mcaf-github-workflows`, `var.tags` on every taggable resource, native `terraform test` with `mock_provider`, conventional-commit PR labels, release-drafter flow, and the recurring anti-patterns observed across the 91-module corpus). For a full qualitative review producing good/bad/verdict reports, use the `review-mcaf` skill instead.
 ---
 
 # MCAF module
@@ -23,7 +23,6 @@ For a full **qualitative** review (good/bad, design critique, verdict), use `rev
 - **AWS full-surface**: `terraform-aws-mcaf-s3`
 - **AWS thin wrapper**: `terraform-aws-mcaf-kms`
 - **Azure full-surface**: `terraform-azure-mcaf-storage-account`
-- **Azure with correct `local.tags` + native tests**: `terraform-azure-mcaf-container-app-environment`
 - **GitHub / GitLab / TFE reference**: `terraform-github-mcaf-repository`
 - **Shared CI**: `schubergphilis/mcaf-github-workflows`
 
@@ -41,8 +40,11 @@ These override or tighten the base skill. Everything not listed here defers to t
 
 ### Version pinning floors
 
-- Terraform: `required_version` must allow the newest Terraform (no upper bound). Any floor is acceptable.
-- AWS: `>= 6.0, < 7.0`. Azurerm: `>= 4, < 5.0`. AzureAD: `>= 3, < 4.0`. Datadog: `>= 3.39, < 4.0`.
+The exact floor number is not important — what matters is the **bounds**: a floor-only constraint for Terraform and most providers (no upper bound), and a major-version range for AzureAD, Azurerm, and Datadog (floor + upper bound at the next major). Don't bikeshed the minor; just ensure the constraint shape is correct.
+
+- Terraform: `required_version` must allow the newest Terraform (no upper bound). Any floor is acceptable (e.g. `">= 1.9"`).
+- AWS: `>= 6` (no upper bound).
+- AzureAD: `>= 3, < 4`. Azurerm: `>= 4, < 5`. Datadog: `>= 3, < 4`. Upper bound at the next major.
 
 ### Resource labels
 
@@ -52,16 +54,7 @@ These override or tighten the base skill. Everything not listed here defers to t
 
 ### Tags
 
-Mandatory pattern, not optional:
-
-```hcl
-# locals.tf
-locals {
-  tags = merge(var.tags, { ManagedBy = "Terraform" })
-}
-```
-
-Every taggable resource references `local.tags`. No `try(var.tags)` cargo-cult.
+Every taggable resource references `var.tags`. No `try(var.tags)` cargo-cult. No `local.tags` indirection unless the module genuinely needs to inject extra tags.
 
 ### CI via `mcaf-github-workflows`
 
@@ -85,45 +78,9 @@ Do not hand-edit these files. If you need different behaviour, change it upstrea
 
 ### Pre-commit
 
-```yaml
-repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-      - id: check-json
-      - id: check-merge-conflict
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-      - id: pretty-format-json
-        args: [--autofix]
-      - id: detect-aws-credentials
-        args: [--allow-missing-credentials]
-      - id: detect-private-key
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.98.1
-    hooks:
-      - id: terraform_fmt
-      - id: terraform_tflint
-      - id: terraform_docs
-      - id: terraform_validate
-  - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 3.2.388
-    hooks:
-      - id: checkov
-        args:
-          - --download-external-modules
-          - "true"
-          - --quiet
-          - --compact
-          - --skip-check
-          - CKV_GIT_5,CKV_GLB_1,CKV_TF_1
-          - --skip-path
-          - examples/*
-```
+The canonical config is maintained in [`mcaf-github-workflows/sync-root/.pre-commit-config.yaml`](https://github.com/schubergphilis/mcaf-github-workflows/blob/main/sync-root/.pre-commit-config.yaml). Read the repository's copy for exact hooks and versions.
 
-Skipped checkov rules (policy):
+Key policy notes on skipped checkov rules:
 
 - `CKV_GIT_5` / `CKV_GLB_1` — MCAF requires ≥1 approval, not ≥2.
 - `CKV_TF_1` — modules use semver tags, not commit SHAs.
@@ -184,7 +141,7 @@ IMPORTANT: We do not pin modules to versions in our examples. We highly recommen
 Block new code adding instances of these:
 
 - Terraform `required_version` set and allows the newest Terraform (no upper bound). Any floor is acceptable.
-- AWS `>= 6`, Azurerm `>= 4`, AzureAD `>= 3`, Datadog `>= 3`.
+- AWS `>= 6` (no upper bound). AzureAD `>= 3, < 4`, Azurerm `>= 4, < 5`, Datadog `>= 3, < 4` (upper bound at next major).
 - No exact or patch-tight provider pins inside a module.
 - No deprecated AWS resources (`aws_s3_bucket_object`, inline `aws_s3_bucket` sub-blocks).
 - No deprecated HCL constructors (`list(...)`, `map(...)`).
@@ -232,7 +189,7 @@ Bug classes spotted in the corpus worth explicit spot-checks:
 3. Replace `.github/workflows/*` and `.pre-commit-config.yaml` with current versions from `mcaf-github-workflows` (preserve `DO NOT CHANGE` header).
 4. Write `terraform.tf` with a `required_version` that allows the newest Terraform (e.g. `">= 1.9"` — floor only, no upper bound) and provider ranges.
 5. Write `variables.tf` with types, descriptions, validations, `sensitive`/`nullable` as needed. Follow arg order rule.
-6. Write `main.tf`. Use `locals.tags = merge(var.tags, { ManagedBy = "Terraform" })`; reference `local.tags` on every taggable resource. Use canonical label (`"default"` or `"this"`).
+6. Write `main.tf`. Reference `var.tags` on every taggable resource. Use canonical label (`"default"` or `"this"`).
 7. Write `outputs.tf`: `id` / `arn` / `name` first, each with `description`. No whole-resource dumps.
 8. Write `examples/default/main.tf` using `source = "../../"`, no `version =`.
 9. Add one example per major feature branch.
@@ -253,7 +210,7 @@ In order, fail fast:
 3. **`terraform.tf`** — provider bumps widen the upper bound? `required_version` not lowered?
 4. **Variables** — new var has `description` + `type`? enumerated values have `validation`? secrets `sensitive = true`? rename/retype triggers `breaking` label + `UPGRADING.md`? arg order inside block correct?
 5. **Outputs** — `description` present? no whole-resource leak? sensitive values marked?
-6. **Tags** — new taggable resource references `local.tags`? `try(var.tags)` removed if present?
+6. **Tags** — new taggable resource references `var.tags`? `try(var.tags)` removed if present?
 7. **Examples** — at least one exercises the change? still valid?
 8. **Tests** — new `run` block covers the new branch? `expect_failures` for negatives?
 9. **Workflows / pre-commit** — untouched? If edited: reject and point at `mcaf-github-workflows`.
@@ -270,9 +227,7 @@ In order, fail fast:
 - Mock provider omitted from tests — test tries to hit a real cloud.
 - Dumping every attribute into `outputs.tf`.
 - Mixed default representations: `""` vs `null`. Prefer `null`.
-- Merging `var.tags` directly at each resource.
 - Creating a resource group inside a module when caller should own it.
-- Forgetting to apply a PR label.
 
 ## Useful one-liners
 

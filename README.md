@@ -142,7 +142,7 @@ Packs activate automatically based on your project's files. They encode *how SBP
 | Pack | Auto-detected by | What it covers |
 |------|-----------------|----------------|
 | **python** | `pyproject.toml`, `setup.py`, `requirements.txt` | uv, ruff, pyright, pytest — auditable, testable Python for production |
-| **terraform** | `*.tf`, `terraform.tf`, `versions.tf` | Module layout, version ranges, `optional(…)`, curated outputs, `local.tags`, native `terraform test` |
+| **terraform** | `*.tf`, `terraform.tf`, `versions.tf` | Module layout, version ranges, `optional(…)`, curated outputs, native `terraform test` |
 | **supply-chain** | `.github/workflows/*.yml` | Pin GitHub Actions to SHA — prevent compromised dependencies in CI/CD |
 
 More packs coming: kubernetes, docker, github-actions.
@@ -188,7 +188,7 @@ Skills load on demand — they're not in context unless you invoke them. Pick wh
 | Skill | What it does |
 |-------|-------------|
 | **terraform** | Generic Terraform/OpenTofu authoring — module structure, variable + output design, block ordering, version pinning, native `terraform test`, CI/CD, security scanning, and state hygiene |
-| **mcaf-module** | Schuberg Philis MCAF-specific deltas (filenames, provider floors, `mcaf-github-workflows` reuse, `local.tags` with `ManagedBy`, release flow). Bundles `GUIDE.md`, the authoritative source |
+| **mcaf-module** | Schuberg Philis MCAF-specific deltas (filenames, provider floors, `mcaf-github-workflows` reuse, release flow). Bundles `GUIDE.md`, the authoritative source |
 | **review-mcaf** | Qualitative MCAF module review that produces a good/bad/verdict markdown report; for many modules, dispatches parallel subagents and stitches one file |
 
 **Brand:**
@@ -229,7 +229,7 @@ Three-layer coverage for anything Terraform at Schuberg Philis — a daily-conte
 └───────────────────────────────────────────────────────────────┘
 ```
 
-- The **pack** lives in `AGENTS.md` / `CLAUDE.md`, so baseline rules (file layout, version ranges, `local.tags`, curated outputs) are always in context when editing a Terraform repo.
+- The **pack** lives in `AGENTS.md` / `CLAUDE.md`, so baseline rules (file layout, version ranges, curated outputs) are always in context when editing a Terraform repo.
 - The **skills** load on demand when the agent decides they apply, or when you explicitly invoke them. They contain the long-form reference material the pack points at.
 
 ### What each piece covers
@@ -238,7 +238,7 @@ Three-layer coverage for anything Terraform at Schuberg Philis — a daily-conte
 |---|---|---|---|
 | **`packs/terraform`** | pack | `*.tf`, `terraform.tf`, `versions.tf` | Tight 276-word AGENTS.md fragment — layout, pinning, variable/output rules, tag pattern, acceptance criteria |
 | **`skills/terraform`** | skill | Any Terraform/OpenTofu authoring or review | Module structure, block ordering, `optional(…)`, testing decision matrix, CI/CD shape, security scanning, state hygiene. Includes `references/`: `module-patterns.md`, `code-patterns.md`, `testing.md`, `ci-cd.md`, `security-compliance.md`, `quick-reference.md` |
-| **`skills/mcaf-module`** | skill | `terraform-<provider>-mcaf-<name>` repos | MCAF deltas: `terraform.tf` not `versions.tf`, provider floors (AWS ≥6, Azurerm ≥4, …), `mcaf-github-workflows` reuse, `local.tags` with `ManagedBy`, native `terraform test` with `mock_provider`, conventional-commit labels, release-drafter flow, corpus-specific anti-patterns. Bundles **`GUIDE.md`** — the authoritative way-of-working distilled from 91 MCAF modules |
+| **`skills/mcaf-module`** | skill | `terraform-<provider>-mcaf-<name>` repos | MCAF deltas: `terraform.tf` not `versions.tf`, provider floors (AWS ≥6, Azurerm ≥4, …), `mcaf-github-workflows` reuse, native `terraform test` with `mock_provider`, conventional-commit labels, release-drafter flow, corpus-specific anti-patterns. Bundles **`GUIDE.md`** — the authoritative way-of-working distilled from 91 MCAF modules |
 | **`skills/review-mcaf`** | skill | "review this MCAF module", "is `terraform-<provider>-mcaf-<name>` any good?" | Qualitative review producing a good/bad/verdict markdown report. For multiple modules, dispatches parallel subagents and stitches one file |
 
 ### Common workflows
