@@ -113,15 +113,29 @@ TOOL_DIRS = {
 }
 
 
+def claude_dir(home: Path) -> Path:
+    """Return the Claude config directory, honouring CLAUDE_CONFIG_DIR if set."""
+    env = os.environ.get("CLAUDE_CONFIG_DIR", "").strip()
+    return Path(env).expanduser() if env else home / ".claude"
+
+
 def detect_tools(home: Path) -> dict:
     """Detect installed AI coding tools by checking for config directories."""
     found = {}
+    _claude_dir = claude_dir(home)
     for tool_name, info in TOOL_DIRS.items():
-        marker = home / info["marker"]
+        if tool_name == "claude-code":
+            marker = _claude_dir
+            skills_dir = _claude_dir / "skills" if info["skills_dir"] else None
+            commands_dir = _claude_dir / "commands" if info["commands_dir"] else None
+        else:
+            marker = home / info["marker"]
+            skills_dir = home / info["skills_dir"] if info["skills_dir"] else None
+            commands_dir = home / info["commands_dir"] if info["commands_dir"] else None
         if marker.is_dir():
             found[tool_name] = {
-                "skills_dir": home / info["skills_dir"] if info["skills_dir"] else None,
-                "commands_dir": home / info["commands_dir"] if info["commands_dir"] else None,
+                "skills_dir": skills_dir,
+                "commands_dir": commands_dir,
                 "agent_file": info["agent_file"],
             }
     return found

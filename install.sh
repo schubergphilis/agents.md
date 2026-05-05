@@ -11,6 +11,7 @@ DEFAULT_REPO="https://github.com/schubergphilis/agents.md.git"
 REPO_URL="${SBP_SKILLS_REPO:-$DEFAULT_REPO}"
 INSTALL_DIR="${HOME}/.local/bin"
 CACHE_DIR="${HOME}/.cache/sbp-skills"
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-${HOME}/.claude}"
 
 echo "Installing sbp-skills..."
 
@@ -64,4 +65,5 @@ if ! echo "$PATH" | tr ':' '\n' | grep -q "$INSTALL_DIR"; then
 fi
 
 echo "Installed sbp-skills to $INSTALL_DIR/sbp-skills"
+echo "Claude config dir: $CLAUDE_DIR"
 echo "Run 'sbp-skills init' in your project to get started."
