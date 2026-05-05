@@ -27,23 +27,81 @@ Without sbp-skills, you get a generic answer. With it, Claude asks about blast r
 
 ---
 
-## 2. Plan: Designing a new system
+## 2. Plan: Reviewing a system architecture
 
-**Context:** Your team needs a real-time alerting pipeline. Before writing a line of code, you want to think through the architecture.
+**Context:** You want a mission-critical review of your system before the team starts building on top of it.
+
+Type the skill name in Claude Code:
 
 ```
-Use sbp-architecture-review to review the design for our new alerting pipeline.
+/sbp-architecture-review
 ```
 
-> **You:** We are adding a real-time alerting pipeline. It reads from Kafka, fans out to webhook endpoints, and retries on failure. I want to review the architecture before we start.
->
-> **Claude:** Before we look at the design, a few things. What happens if the Kafka consumer falls behind by more than your SLA window? Is there a circuit breaker on the webhook fanout, or does one slow endpoint block the others? And when this fails at 3 AM, who gets paged and what can they do without a full rollback?
->
-> **You:** No circuit breaker yet. On-call can restart the consumer but cannot reroute traffic.
->
-> **Claude:** That is your first single point of failure. A slow webhook will block the entire fanout. Isolate each destination in its own worker pool before this goes to production. You also need a runbook that does not require a deploy to mitigate. Let's work through the rest.
+The skill first explores the codebase autonomously — reading files, tracing dependencies, understanding what is actually there. Then it produces a structured review. Here is real output from a recent run:
 
-You get the gaps before any code exists. That is cheaper to fix now than after the first incident.
+---
+
+**Architecture Review**
+
+*Reviewed: 2026-05-05 / Reviewer: Claude Code / sbp-architecture-review*
+
+**What's here**
+
+| Component | Purpose | Status |
+|-----------|---------|--------|
+| SBP Framework | Claude Code commands + skills for mission-critical engineering | Dev / operational |
+| vulnapp/ | Intentionally vulnerable Flask app for security education | Educational / local only |
+
+---
+
+**Strengths**
+
+AGENTS.md is genuinely good engineering philosophy. The "3 AM question" framing, the explicit blast-radius-first thinking, and the requirement to explain *why* rather than just *what* — these are the right instincts, clearly stated.
+
+vulnapp is well-contained for its purpose. It binds to 127.0.0.1 only, uses an ephemeral /tmp database, and ships a clear header listing every intentional vulnerability.
+
+---
+
+**Risks**
+
+`HIGH` — Framework has no Claude API availability fallback
+
+The entire command set is powered by the Claude API. If the API is unavailable, engineers lose all framework support with no degraded mode and no offline runbook substitute. Blast radius: all engineers lose decision-support tooling exactly when a production incident might also be occurring.
+
+`HIGH` — No CI/CD pipeline or automated gate
+
+Zero CI configuration. Changes to commands, skills, or vulnapp are merged with no automated verification. A broken skill ships silently — and if an engineer runs `/pre-deploy` during a production push and the command itself is broken, they get false confidence. That is the worst outcome for a tool designed to prevent exactly that.
+
+`HIGH` — vulnapp has no deployment guard-rail beyond the warning comment
+
+Nothing prevents the app from being deployed behind a public-facing reverse proxy. If deployed publicly, all six vulnerability classes become live attack surface.
+
+`MEDIUM` — Rollback is theoretical only
+
+No deployment pipeline means rollback is "revert the git commit and re-run." This has never been tested. For the framework specifically, breaking a command means manual intervention with no defined recovery time objective.
+
+---
+
+**Recommendations (ordered by severity)**
+
+1. **[HIGH]** Add a Claude API circuit breaker / offline fallback. Define a minimal offline mode — a static Markdown checklist that covers the same surface as `/pre-deploy` and `/risk-check`. Engineers should be able to run a degraded-but-functional review without API access.
+
+2. **[HIGH]** Add a CI pipeline. A GitHub Actions workflow that runs a syntax check and validates command/skill YAML on every PR. It does not need to be sophisticated — it needs to exist so broken changes are caught before merge.
+
+3. **[HIGH]** Add a network-level guard for vulnapp. A comment is not a guard. Add an assertion that aborts if the app is not bound to localhost:
+   ```python
+   assert host == "127.0.0.1", "vulnapp must not be exposed beyond localhost"
+   ```
+
+4. **[MEDIUM]** Document a tested rollback procedure. "Revert the commit and re-run" is only a rollback if someone has verified it works. Write three steps, run them once, record that they were tested.
+
+---
+
+*Summary: The framework philosophy is strong. The operational scaffolding is absent: no CI, no API fallback, no tested rollback. For a framework engineers rely on during production incidents, that gap is the most urgent thing to close.*
+
+---
+
+You get a prioritised list of risks before any code changes. Each finding has a blast radius, a recommendation, and enough context to act on it immediately.
 
 ---
 
