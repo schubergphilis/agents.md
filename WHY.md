@@ -48,9 +48,9 @@ The agent challenges before you've written a line. "What's the blast radius? Who
 | | |
 |---|---|
 | `/challenge` | Stress-test your approach |
-| `architecture-review` | Single points of failure, observability, operational readiness |
-| `threat-model` | Attack surfaces, mitigations, risk matrix |
-| `agent-architecture-review` | Multi-agent system design against the three-layer model |
+| `sbp-architecture-review` | Single points of failure, observability, operational readiness |
+| `sbp-threat-model` | Attack surfaces, mitigations, risk matrix |
+| `sbp-agent-architecture-review` | Multi-agent system design against the three-layer model |
 
 ### Build
 
@@ -60,10 +60,10 @@ The agent auto-reviews its own output — silent failures, missing error handlin
 |---|---|
 | `/review` | Mission-critical review of current work |
 | `/explain` | Understand unfamiliar code or infrastructure |
-| `secure-code-review` | Security-focused analysis: auth, injection, secrets, dependencies |
-| `dependency-audit` | Supply-chain risk, bloat, unused packages |
-| `explain-codebase` | Deep dive into architecture, patterns, design decisions |
-| `why-we-do-this` | The reasoning behind SBP conventions |
+| `sbp-secure-code-review` | Security-focused analysis: auth, injection, secrets, dependencies |
+| `sbp-dependency-audit` | Supply-chain risk, bloat, unused packages |
+| `sbp-explain-codebase` | Deep dive into architecture, patterns, design decisions |
+| `sbp-why-we-do-this` | The reasoning behind SBP conventions |
 
 ### Run
 
@@ -74,11 +74,11 @@ The same team that builds it runs it. The agent thinks about what happens after 
 | `/pre-deploy` | Quick GO/NO-GO |
 | `/what-if-this-fails` | Failure cascades, recovery, the 3 AM test |
 | `/risk-check` | Full blast radius and rollback analysis |
-| `deploy-checklist` | Complete pre-deployment verification |
-| `safe-change` | Guided walkthrough for high-risk production changes |
-| `incident-review` | Blameless post-incident analysis |
-| `runbook-author` | Generate operational runbooks from the codebase |
-| `observability-check` | Verify monitoring, alerting, and logging coverage |
+| `sbp-deploy-checklist` | Complete pre-deployment verification |
+| `sbp-safe-change` | Guided walkthrough for high-risk production changes |
+| `sbp-incident-review` | Blameless post-incident analysis |
+| `sbp-runbook-author` | Generate operational runbooks from the codebase |
+| `sbp-observability-check` | Verify monitoring, alerting, and logging coverage |
 
 ### Learn
 
@@ -87,8 +87,8 @@ When you're new to a team, a codebase, or SBP itself — the agent is your onboa
 | | |
 |---|---|
 | `/explain` | Quick orientation on unfamiliar code or infra |
-| `explain-codebase` | Deep dive — data flow, patterns, design decisions |
-| `why-we-do-this` | The reasoning behind SBP conventions |
+| `sbp-explain-codebase` | Deep dive — data flow, patterns, design decisions |
+| `sbp-why-we-do-this` | The reasoning behind SBP conventions |
 
 ### Contribute
 

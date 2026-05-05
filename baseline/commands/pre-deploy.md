@@ -13,4 +13,4 @@ Answer each question concisely. Skip items that clearly don't apply (say why).
 
 Based on the answers: **GO** or **NO-GO** with the blocking reason.
 
-Keep this fast — if deeper analysis is needed, use the `deploy-checklist` skill instead.
+Keep this fast — if deeper analysis is needed, use the `sbp-deploy-checklist` skill instead.
