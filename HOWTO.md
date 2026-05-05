@@ -27,65 +27,243 @@ Without sbp-skills, you get a generic answer. With it, Claude asks about blast r
 
 ---
 
-## 2. Plan: Designing a new system
+## 2. Plan: Reviewing a system architecture
 
-**Context:** Your team needs a real-time alerting pipeline. Before writing a line of code, you want to think through the architecture.
+**Context:** You want a mission-critical review of your system before the team starts building on top of it.
+
+Type the skill name in Claude Code:
 
 ```
-Use sbp-architecture-review to review the design for our new alerting pipeline.
+/sbp-architecture-review
 ```
 
-> **You:** We are adding a real-time alerting pipeline. It reads from Kafka, fans out to webhook endpoints, and retries on failure. I want to review the architecture before we start.
->
-> **Claude:** Before we look at the design, a few things. What happens if the Kafka consumer falls behind by more than your SLA window? Is there a circuit breaker on the webhook fanout, or does one slow endpoint block the others? And when this fails at 3 AM, who gets paged and what can they do without a full rollback?
->
-> **You:** No circuit breaker yet. On-call can restart the consumer but cannot reroute traffic.
->
-> **Claude:** That is your first single point of failure. A slow webhook will block the entire fanout. Isolate each destination in its own worker pool before this goes to production. You also need a runbook that does not require a deploy to mitigate. Let's work through the rest.
-
-You get the gaps before any code exists. That is cheaper to fix now than after the first incident.
+The skill first explores the codebase autonomously — reading files, tracing dependencies, understanding what is actually there. Then it produces a structured review. Here is real output from a recent run:
 
 ---
 
-## 3. Build: Developing a feature
+**Architecture Review**
 
-**Context:** The architecture is signed off. You are implementing the webhook fanout logic.
+*Reviewed: 2026-05-05 / Reviewer: Claude Code / sbp-architecture-review*
+
+**What's here**
+
+| Component | Purpose | Status |
+|-----------|---------|--------|
+| SBP Framework | Claude Code commands + skills for mission-critical engineering | Dev / operational |
+| vulnapp/ | Intentionally vulnerable Flask app for security education | Educational / local only |
+
+---
+
+**Strengths**
+
+AGENTS.md is genuinely good engineering philosophy. The "3 AM question" framing, the explicit blast-radius-first thinking, and the requirement to explain *why* rather than just *what* — these are the right instincts, clearly stated.
+
+vulnapp is well-contained for its purpose. It binds to 127.0.0.1 only, uses an ephemeral /tmp database, and ships a clear header listing every intentional vulnerability.
+
+---
+
+**Risks**
+
+`HIGH` — Framework has no Claude API availability fallback
+
+The entire command set is powered by the Claude API. If the API is unavailable, engineers lose all framework support with no degraded mode and no offline runbook substitute. Blast radius: all engineers lose decision-support tooling exactly when a production incident might also be occurring.
+
+`HIGH` — No CI/CD pipeline or automated gate
+
+Zero CI configuration. Changes to commands, skills, or vulnapp are merged with no automated verification. A broken skill ships silently — and if an engineer runs `/pre-deploy` during a production push and the command itself is broken, they get false confidence. That is the worst outcome for a tool designed to prevent exactly that.
+
+`HIGH` — vulnapp has no deployment guard-rail beyond the warning comment
+
+Nothing prevents the app from being deployed behind a public-facing reverse proxy. If deployed publicly, all six vulnerability classes become live attack surface.
+
+`MEDIUM` — Rollback is theoretical only
+
+No deployment pipeline means rollback is "revert the git commit and re-run." This has never been tested. For the framework specifically, breaking a command means manual intervention with no defined recovery time objective.
+
+---
+
+**Recommendations (ordered by severity)**
+
+1. **[HIGH]** Add a Claude API circuit breaker / offline fallback. Define a minimal offline mode — a static Markdown checklist that covers the same surface as `/pre-deploy` and `/risk-check`. Engineers should be able to run a degraded-but-functional review without API access.
+
+2. **[HIGH]** Add a CI pipeline. A GitHub Actions workflow that runs a syntax check and validates command/skill YAML on every PR. It does not need to be sophisticated — it needs to exist so broken changes are caught before merge.
+
+3. **[HIGH]** Add a network-level guard for vulnapp. A comment is not a guard. Add an assertion that aborts if the app is not bound to localhost:
+   ```python
+   assert host == "127.0.0.1", "vulnapp must not be exposed beyond localhost"
+   ```
+
+4. **[MEDIUM]** Document a tested rollback procedure. "Revert the commit and re-run" is only a rollback if someone has verified it works. Write three steps, run them once, record that they were tested.
+
+---
+
+*Summary: The framework philosophy is strong. The operational scaffolding is absent: no CI, no API fallback, no tested rollback. For a framework engineers rely on during production incidents, that gap is the most urgent thing to close.*
+
+---
+
+You get a prioritised list of risks before any code changes. Each finding has a blast radius, a recommendation, and enough context to act on it immediately.
+
+---
+
+## 3. Build: Security review
+
+**Context:** You want a security review of a codebase before it ships.
+
+First, enable the skill from the CLI (or via the plugin install — same result):
+
+```bash
+sbp-skills enable sbp-secure-code-review
+```
+
+Then in Claude Code:
 
 ```
-Use sbp-feature-development to build the webhook fanout component.
+use sbp-secure-code-review
 ```
 
-The skill drives you through a TDD approach: write a failing test for the happy path first, then retry logic, then the circuit breaker. When the implementation is taking shape, switch to a security review:
+The skill explores the codebase first, then produces a structured review with severity ratings, blast radius for each finding, exploitation steps, and concrete remediation. Here is real output from a recent run on a Flask app:
 
+---
+
+**Security Review — vulnapp/app.py**
+
+*Context: Intentionally vulnerable Flask app for local security education. Every finding below is a deliberate demonstration of a real vulnerability class. This review treats it as if it were production code.*
+
+---
+
+**Critical**
+
+**C1 — SQL Injection: Authentication Bypass (app.py:90)**
+
+```python
+query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
 ```
-Use sbp-secure-code-review on the webhook handler.
+
+Blast radius: Any unauthenticated actor can log in as any user — including admin — without knowing any credentials. Full authentication layer is bypassed.
+
+Exploitation: Submit `username = ' OR '1'='1' --` with any password.
+
+Remediation:
+```python
+row = db.execute(
+    "SELECT * FROM users WHERE username=? AND password=?",
+    (username, password)
+).fetchone()
 ```
 
-> **Claude:** The webhook URL is taken directly from the Kafka message payload and passed to the HTTP client without validation. An attacker who can write to the Kafka topic can make your service send requests to internal endpoints. Validate the URL against an allowlist of known destinations before any outbound request.
+---
 
-That finding came from the review, not from you remembering to check for SSRF. The skill catches the class of bug, not just the instance.
+**C3 — IDOR + Plaintext Password Exposure (app.py:142)**
+
+```python
+return f"<h3>User #{row['id']}</h3><p>Username: {row['username']}<br>Password: {row['password']}</p>"
+```
+
+Blast radius: Any unauthenticated visitor can enumerate all user accounts and retrieve their plaintext passwords by iterating `/user/1`, `/user/2`, etc. Full credential dump in three HTTP requests.
+
+Remediation: Require authentication, enforce users can only read their own profile, never return password fields from any endpoint. Passwords must be stored as salted hashes.
+
+---
+
+**C4 — Path Traversal: Arbitrary File Read (app.py:152)**
+
+```python
+path = os.path.join("/tmp/uploads", name)
+with open(path) as f:
+    content = f.read()
+```
+
+Blast radius: Any file readable by the process user can be exfiltrated — `/etc/passwd`, source code, environment files, SSH keys, cloud credentials. On a container running as root, this is a full filesystem read.
+
+Remediation:
+```python
+base = os.path.realpath("/tmp/uploads")
+candidate = os.path.realpath(os.path.join(base, name))
+if not candidate.startswith(base + os.sep):
+    return "Forbidden", 403
+```
+
+---
+
+**High**
+
+**H3 — Hardcoded Flask Secret Key (app.py:18)**
+
+```python
+app.secret_key = "supersecret123"
+```
+
+Blast radius: Anyone with repo access can forge valid session cookies for any user — including admin — without ever authenticating. This is a complete authentication bypass that survives SQL injection fixes.
+
+Remediation:
+```python
+import os, sys
+app.secret_key = os.environ.get("SECRET_KEY") or sys.exit("SECRET_KEY not set")
+```
+
+---
+
+*(...4 medium findings, 3 low findings omitted for brevity)*
+
+---
+
+**Summary**
+
+| Severity | Count |
+|----------|-------|
+| Critical | 4 |
+| High | 4 |
+| Medium | 4 |
+| Low | 3 |
+| **Total** | **15** |
+
+Top concern: two independently exploitable SQL injection points, both unauthenticated, one giving full auth bypass and one giving a complete database dump. A single HTTP request yields admin access or all passwords.
+
+**Production deployment verdict: NO**
+
+This application has four critical vulnerabilities, any one of which allows full compromise by an unauthenticated attacker. The blocking issues are C1–C4; all four must be remediated before any broader deployment is considered.
+
+---
+
+Each finding includes the exact line, the blast radius, a working exploit, and a drop-in fix. The review does not stop at identifying the class of bug — it tells you how to exploit it and how to fix it.
 
 ---
 
 ## 4. Run: Deploying safely
 
-**Context:** The fanout component is ready and tested. It is Tuesday morning. You want a clean deploy.
+**Context:** You are about to ship a change and want a quick GO/NO-GO before pushing.
 
 ```
-Use sbp-deploy-checklist for the alerting pipeline deployment.
+/pre-deploy
 ```
 
-> **Claude:** Checking deployment readiness.
->
-> **Rollback:** your deployment disables the feature flag and stops the new consumer. Rollback time is under 5 minutes. Good.
->
-> **Monitoring:** no alert on fanout lag or dead-letter queue depth. If the fanout silently falls behind, you will not know until a customer tells you. Add those two metrics before deploying.
->
-> **Communication:** has the on-call been notified? This component adds a new failure mode to the alerting path.
->
-> **NO-GO** until the monitoring gaps are closed.
+Real output from a recent run:
 
-Add the metrics, notify on-call, run the checklist again.
+---
+
+**Pre-Deploy Check: vulnapp/ — Intentionally Vulnerable Flask App**
+
+1. **What's changing?** Adding an intentionally vulnerable Flask app (SQL injection, XSS, IDOR, path traversal, hardcoded secret) for local security education.
+2. **Rollback plan?** Delete the directory or git revert — immediate, no state to clean up (DB lives in /tmp and only exists after first run).
+3. **Blast radius?** If deployed anywhere beyond localhost:5001, every route is exploitable and `debug=True` enables unauthenticated RCE on the host. Blast radius is catastrophic if network-exposed, zero if localhost-only.
+4. **Tests green?** No tests exist — not applicable for an educational demo, but worth noting there are no guardrails preventing accidental production use.
+5. **Monitoring ready?** N/A for a local tool. No production system is involved.
+6. **Anyone need to know?** Anyone with access to the repo needs to understand this must never run on a shared or internet-facing host.
+
+**Verdict: NO-GO for any networked environment / GO for local-only educational use**
+
+Blocking reason for networked deploy: `debug=True` + no auth + path traversal = host compromise. The app has no defence-in-depth — the only control is the 127.0.0.1 binding.
+
+Conditions for GO:
+- Confirmed running locally or in an isolated, network-none container only.
+- Repo visibility is private or the team is briefed that this is intentionally broken.
+- No CI pipeline spins this up with a published port.
+
+---
+
+Notice what happened: the command did not just say "looks fine." It found the catastrophic blast radius, named the specific mechanism (`debug=True` + no auth), and gave you a concrete condition list to satisfy before it will flip to GO. That is the kind of review that stops the 3 AM page.
+
+For a full deployment with rollback verification, monitoring checks, and communication planning, use `sbp-deploy-checklist` instead.
 
 ---
 
