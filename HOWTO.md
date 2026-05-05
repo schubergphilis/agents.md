@@ -105,23 +105,127 @@ You get a prioritised list of risks before any code changes. Each finding has a 
 
 ---
 
-## 3. Build: Developing a feature
+## 3. Build: Security review
 
-**Context:** The architecture is signed off. You are implementing the webhook fanout logic.
+**Context:** You want a security review of a codebase before it ships.
 
-```
-Use sbp-feature-development to build the webhook fanout component.
-```
+First, enable the skill from the CLI (or via the plugin install — same result):
 
-The skill drives you through a TDD approach: write a failing test for the happy path first, then retry logic, then the circuit breaker. When the implementation is taking shape, switch to a security review:
-
-```
-Use sbp-secure-code-review on the webhook handler.
+```bash
+sbp-skills enable sbp-secure-code-review
 ```
 
-> **Claude:** The webhook URL is taken directly from the Kafka message payload and passed to the HTTP client without validation. An attacker who can write to the Kafka topic can make your service send requests to internal endpoints. Validate the URL against an allowlist of known destinations before any outbound request.
+Then in Claude Code:
 
-That finding came from the review, not from you remembering to check for SSRF. The skill catches the class of bug, not just the instance.
+```
+use sbp-secure-code-review
+```
+
+The skill explores the codebase first, then produces a structured review with severity ratings, blast radius for each finding, exploitation steps, and concrete remediation. Here is real output from a recent run on a Flask app:
+
+---
+
+**Security Review — vulnapp/app.py**
+
+*Context: Intentionally vulnerable Flask app for local security education. Every finding below is a deliberate demonstration of a real vulnerability class. This review treats it as if it were production code.*
+
+---
+
+**Critical**
+
+**C1 — SQL Injection: Authentication Bypass (app.py:90)**
+
+```python
+query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+```
+
+Blast radius: Any unauthenticated actor can log in as any user — including admin — without knowing any credentials. Full authentication layer is bypassed.
+
+Exploitation: Submit `username = ' OR '1'='1' --` with any password.
+
+Remediation:
+```python
+row = db.execute(
+    "SELECT * FROM users WHERE username=? AND password=?",
+    (username, password)
+).fetchone()
+```
+
+---
+
+**C3 — IDOR + Plaintext Password Exposure (app.py:142)**
+
+```python
+return f"<h3>User #{row['id']}</h3><p>Username: {row['username']}<br>Password: {row['password']}</p>"
+```
+
+Blast radius: Any unauthenticated visitor can enumerate all user accounts and retrieve their plaintext passwords by iterating `/user/1`, `/user/2`, etc. Full credential dump in three HTTP requests.
+
+Remediation: Require authentication, enforce users can only read their own profile, never return password fields from any endpoint. Passwords must be stored as salted hashes.
+
+---
+
+**C4 — Path Traversal: Arbitrary File Read (app.py:152)**
+
+```python
+path = os.path.join("/tmp/uploads", name)
+with open(path) as f:
+    content = f.read()
+```
+
+Blast radius: Any file readable by the process user can be exfiltrated — `/etc/passwd`, source code, environment files, SSH keys, cloud credentials. On a container running as root, this is a full filesystem read.
+
+Remediation:
+```python
+base = os.path.realpath("/tmp/uploads")
+candidate = os.path.realpath(os.path.join(base, name))
+if not candidate.startswith(base + os.sep):
+    return "Forbidden", 403
+```
+
+---
+
+**High**
+
+**H3 — Hardcoded Flask Secret Key (app.py:18)**
+
+```python
+app.secret_key = "supersecret123"
+```
+
+Blast radius: Anyone with repo access can forge valid session cookies for any user — including admin — without ever authenticating. This is a complete authentication bypass that survives SQL injection fixes.
+
+Remediation:
+```python
+import os, sys
+app.secret_key = os.environ.get("SECRET_KEY") or sys.exit("SECRET_KEY not set")
+```
+
+---
+
+*(...4 medium findings, 3 low findings omitted for brevity)*
+
+---
+
+**Summary**
+
+| Severity | Count |
+|----------|-------|
+| Critical | 4 |
+| High | 4 |
+| Medium | 4 |
+| Low | 3 |
+| **Total** | **15** |
+
+Top concern: two independently exploitable SQL injection points, both unauthenticated, one giving full auth bypass and one giving a complete database dump. A single HTTP request yields admin access or all passwords.
+
+**Production deployment verdict: NO**
+
+This application has four critical vulnerabilities, any one of which allows full compromise by an unauthenticated attacker. The blocking issues are C1–C4; all four must be remediated before any broader deployment is considered.
+
+---
+
+Each finding includes the exact line, the blast radius, a working exploit, and a drop-in fix. The review does not stop at identifying the class of bug — it tells you how to exploit it and how to fix it.
 
 ---
 
