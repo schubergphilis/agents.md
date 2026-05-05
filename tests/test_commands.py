@@ -23,10 +23,10 @@ def test_link_skills_replaces_existing_symlink(tmp_home, repo_root):
     skills_dir = tmp_home / ".claude" / "skills"
     skills_dir.mkdir(parents=True)
     # Create a stale symlink
-    stale = skills_dir / "architecture-review"
+    stale = skills_dir / "sbp-architecture-review"
     stale.symlink_to("/nonexistent/path")
 
-    cli.link_skills(tmp_home, repo_root, ["architecture-review"], "claude-code")
+    cli.link_skills(tmp_home, repo_root, ["sbp-architecture-review"], "claude-code")
     assert stale.is_symlink()
     assert (stale / "SKILL.md").exists()
 
@@ -36,11 +36,11 @@ def test_link_skills_replaces_existing_directory(tmp_home, repo_root):
     skills_dir = tmp_home / ".claude" / "skills"
     skills_dir.mkdir(parents=True)
     # Create a real directory where the symlink should go
-    existing = skills_dir / "architecture-review"
+    existing = skills_dir / "sbp-architecture-review"
     existing.mkdir()
     (existing / "old-file.txt").write_text("stale")
 
-    cli.link_skills(tmp_home, repo_root, ["architecture-review"], "claude-code")
+    cli.link_skills(tmp_home, repo_root, ["sbp-architecture-review"], "claude-code")
     assert existing.is_symlink()
     assert (existing / "SKILL.md").exists()
 

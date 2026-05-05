@@ -31,10 +31,10 @@ def test_parse_skill_md_missing_frontmatter():
 
 
 def test_parse_skill_md_from_file(repo_root):
-    path = repo_root / "skills" / "architecture-review" / "SKILL.md"
+    path = repo_root / "skills" / "sbp-architecture-review" / "SKILL.md"
     content = path.read_text()
     skill = cli.parse_skill_md(content)
-    assert skill["name"] == "architecture-review"
+    assert skill["name"] == "sbp-architecture-review"
     assert len(skill["description"]) >= 50
     assert skill["metadata"]["lifecycle"] == "plan"
 

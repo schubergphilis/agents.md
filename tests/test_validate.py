@@ -25,7 +25,7 @@ def test_validate_pack_missing_agents_md(tmp_path):
 
 
 def test_validate_valid_skill(repo_root):
-    errors = cli.validate_skill(repo_root / "skills" / "architecture-review")
+    errors = cli.validate_skill(repo_root / "skills" / "sbp-architecture-review")
     assert errors == [], f"Unexpected errors: {errors}"
 
 

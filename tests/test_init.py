@@ -66,14 +66,14 @@ def test_link_skills(tmp_home, repo_root):
     cli.link_skills(
         home=tmp_home,
         repo_root=repo_root,
-        skills=["architecture-review", "deploy-checklist"],
+        skills=["sbp-architecture-review", "sbp-deploy-checklist"],
         tool="claude-code",
     )
 
     skills_dir = tmp_home / ".claude" / "skills"
-    assert (skills_dir / "architecture-review").is_symlink()
-    assert (skills_dir / "deploy-checklist").is_symlink()
-    assert (skills_dir / "architecture-review" / "SKILL.md").exists()
+    assert (skills_dir / "sbp-architecture-review").is_symlink()
+    assert (skills_dir / "sbp-deploy-checklist").is_symlink()
+    assert (skills_dir / "sbp-architecture-review" / "SKILL.md").exists()
 
 
 def test_copy_copilot_prompts(tmp_project, repo_root):

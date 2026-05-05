@@ -11,7 +11,7 @@ def test_parse_detection_toml(repo_root):
 
 def test_parse_defaults_toml(repo_root):
     defaults = cli.parse_defaults_toml(repo_root / "defaults.toml")
-    assert "architecture-review" in defaults["skills"]
+    assert "sbp-architecture-review" in defaults["skills"]
     assert "review" in defaults["commands"]
 
 
