@@ -127,23 +127,39 @@ That finding came from the review, not from you remembering to check for SSRF. T
 
 ## 4. Run: Deploying safely
 
-**Context:** The fanout component is ready and tested. It is Tuesday morning. You want a clean deploy.
+**Context:** You are about to ship a change and want a quick GO/NO-GO before pushing.
 
 ```
-Use sbp-deploy-checklist for the alerting pipeline deployment.
+/pre-deploy
 ```
 
-> **Claude:** Checking deployment readiness.
->
-> **Rollback:** your deployment disables the feature flag and stops the new consumer. Rollback time is under 5 minutes. Good.
->
-> **Monitoring:** no alert on fanout lag or dead-letter queue depth. If the fanout silently falls behind, you will not know until a customer tells you. Add those two metrics before deploying.
->
-> **Communication:** has the on-call been notified? This component adds a new failure mode to the alerting path.
->
-> **NO-GO** until the monitoring gaps are closed.
+Real output from a recent run:
 
-Add the metrics, notify on-call, run the checklist again.
+---
+
+**Pre-Deploy Check: vulnapp/ — Intentionally Vulnerable Flask App**
+
+1. **What's changing?** Adding an intentionally vulnerable Flask app (SQL injection, XSS, IDOR, path traversal, hardcoded secret) for local security education.
+2. **Rollback plan?** Delete the directory or git revert — immediate, no state to clean up (DB lives in /tmp and only exists after first run).
+3. **Blast radius?** If deployed anywhere beyond localhost:5001, every route is exploitable and `debug=True` enables unauthenticated RCE on the host. Blast radius is catastrophic if network-exposed, zero if localhost-only.
+4. **Tests green?** No tests exist — not applicable for an educational demo, but worth noting there are no guardrails preventing accidental production use.
+5. **Monitoring ready?** N/A for a local tool. No production system is involved.
+6. **Anyone need to know?** Anyone with access to the repo needs to understand this must never run on a shared or internet-facing host.
+
+**Verdict: NO-GO for any networked environment / GO for local-only educational use**
+
+Blocking reason for networked deploy: `debug=True` + no auth + path traversal = host compromise. The app has no defence-in-depth — the only control is the 127.0.0.1 binding.
+
+Conditions for GO:
+- Confirmed running locally or in an isolated, network-none container only.
+- Repo visibility is private or the team is briefed that this is intentionally broken.
+- No CI pipeline spins this up with a published port.
+
+---
+
+Notice what happened: the command did not just say "looks fine." It found the catastrophic blast radius, named the specific mechanism (`debug=True` + no auth), and gave you a concrete condition list to satisfy before it will flip to GO. That is the kind of review that stops the 3 AM page.
+
+For a full deployment with rollback verification, monitoring checks, and communication planning, use `sbp-deploy-checklist` instead.
 
 ---
 
