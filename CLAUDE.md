@@ -19,6 +19,12 @@ python3 -m pytest tests/test_fragment.py::test_insert_baseline -v
 
 Single-file Python CLI at `cli/sbp-skills` (stdlib only, Python 3.11+). Content lives in `baseline/`, `packs/`, `skills/`. Tests import the CLI via importlib in `tests/conftest.py`.
 
+## Git workflow
+
+- Always create a feature branch before making commits — never commit directly to `main`
+- Branch naming: `feat/<topic>`, `fix/<topic>`, `chore/<topic>`
+- Open a PR after committing; do not push to main directly
+
 ## Key conventions
 
 - CLI must use only Python standard library — no pip dependencies

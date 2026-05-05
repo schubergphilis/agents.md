@@ -2,12 +2,12 @@ Scaffold a new skill for sbp-skills.
 
 ## Usage
 
-Provide the skill name (lowercase-with-hyphens):
+Provide the skill name. All SBP skills use the `sbp-` prefix so they are easy to distinguish from community or personal skills:
 
 ```
-/new-skill runbook-author
-/new-skill capacity-planning
-/new-skill cost-analysis
+/new-skill sbp-capacity-planning
+/new-skill sbp-decision-record
+/new-skill sbp-cost-analysis
 ```
 
 ## What to do
