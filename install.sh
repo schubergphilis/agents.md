@@ -7,7 +7,7 @@ set -euo pipefail
 # Override the default repo with SBP_SKILLS_REPO:
 #   SBP_SKILLS_REPO=https://gitlab.com/my-org/sbp-skills.git curl ... | bash
 
-DEFAULT_REPO="https://github.com/schuberg/sbp-skills.git"
+DEFAULT_REPO="https://github.com/schubergphilis/agents.md.git"
 REPO_URL="${SBP_SKILLS_REPO:-$DEFAULT_REPO}"
 INSTALL_DIR="${HOME}/.local/bin"
 CACHE_DIR="${HOME}/.cache/sbp-skills"

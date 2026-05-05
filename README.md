@@ -18,7 +18,7 @@ Works with **Claude Code**, **GitHub Copilot**, and **OpenCode**. Compatible wit
 ### Option A: One-liner install
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/schuberg/sbp-skills/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/schubergphilis/agents.md/main/install.sh | bash
 ```
 
 Then in any project:
@@ -61,8 +61,8 @@ cat packs/supply-chain/AGENTS.md >> your-project/AGENTS.md
 
 ```bash
 # Copy any skill you want
-cp -r skills/threat-model ~/.claude/skills/
-cp -r skills/deploy-checklist ~/.claude/skills/
+cp -r skills/sbp-threat-model ~/.claude/skills/
+cp -r skills/sbp-deploy-checklist ~/.claude/skills/
 ```
 
 That's it. No tool required. The product is the content, not the CLI.
@@ -83,9 +83,9 @@ Plugin groups available:
 
 | Plugin | Skills |
 |--------|--------|
-| **operations-skills** | architecture-review, deploy-checklist, incident-review, observability-check, runbook-author, safe-change |
-| **security-skills** | threat-model, secure-code-review, dependency-audit |
-| **engineering-skills** | explain-codebase, agent-architecture-review, why-we-do-this |
+| **operations-skills** | sbp-architecture-review, sbp-deploy-checklist, sbp-incident-review, sbp-observability-check, sbp-runbook-author, sbp-safe-change |
+| **security-skills** | sbp-threat-model, sbp-secure-code-review, sbp-dependency-audit |
+| **engineering-skills** | sbp-explain-codebase, sbp-agent-architecture-review, sbp-why-we-do-this |
 | **brand-skills** | sbp-brandbook (SBP visual identity — colors, typography, logo, assets) |
 
 This is the preferred path for non-engineers and business users on Claude Code / Claude.ai who just want the skills without touching a terminal.
@@ -130,7 +130,7 @@ Slash commands you can use in any conversation:
 | `/challenge` | Challenge your approach like a senior engineer — worst case, assumptions, 3 AM scenario |
 | `/risk-check` | Full blast radius analysis with LOW/MEDIUM/HIGH/CRITICAL rating and rollback assessment |
 | `/explain` | Explain unfamiliar code, infrastructure, or patterns — teaches, doesn't just describe |
-| `/pre-deploy` | Quick GO/NO-GO deployment check — lighter than the full deploy-checklist skill |
+| `/pre-deploy` | Quick GO/NO-GO deployment check — lighter than the full sbp-deploy-checklist skill |
 | `/what-if-this-fails` | Trace failure cascades — direct failure, downstream impact, recovery, the 3 AM test |
 | `/new-pack` | Scaffold a new domain pack for the team |
 | `/new-skill` | Scaffold a new skill |
@@ -149,39 +149,39 @@ More packs coming: kubernetes, docker, github-actions.
 
 ### Skills — deeper workflows for when you need them
 
-Skills load on demand — they're not in context unless you invoke them. Pick what helps your work.
+Skills load on demand — they're not in context unless you invoke them. All SBP skills are prefixed with `sbp-` so they're easy to distinguish from community or personal skills in your `~/.claude/skills/` directory.
 
 **Planning:**
 
 | Skill | What it does |
 |-------|-------------|
-| **architecture-review** (default) | Review systems for single points of failure, blast radius, rollback paths, observability gaps, operational readiness |
-| **threat-model** | Structured threat modeling — assets, threat actors, attack surfaces, mitigations, prioritized actions |
-| **agent-architecture-review** | Review multi-agent system designs against a three-layer reference model (guardian/orchestration/worker) |
-| **test-planning** | Design comprehensive test coverage before implementation — behaviors, boundary cases, failure modes, right test type for each |
+| **sbp-architecture-review** (default) | Review systems for single points of failure, blast radius, rollback paths, observability gaps, operational readiness |
+| **sbp-threat-model** | Structured threat modeling — assets, threat actors, attack surfaces, mitigations, prioritized actions |
+| **sbp-agent-architecture-review** | Review multi-agent system designs against a three-layer reference model (guardian/orchestration/worker) |
+| **sbp-test-planning** | Design comprehensive test coverage before implementation — behaviors, boundary cases, failure modes, right test type for each |
 
 **Building:**
 
 | Skill | What it does |
 |-------|-------------|
-| **feature-development** | Build a new feature using test-driven development — clarify requirements, plan test coverage, drive through red/green/refactor, integrate, and verify |
-| **debug-investigation** | Systematically investigate, reproduce, and fix software bugs — frame symptoms, reliably reproduce, isolate the root cause, write a regression test, then fix |
-| **refactor** | Improve code structure without changing observable behavior — establish a safety net, plan small reversible steps, execute iteratively, validate no regressions |
-| **test-authoring** | Write tests that prove functionality works and catch regressions — structure each test clearly, exercise real behavior, keep the suite fast and reliable |
-| **secure-code-review** | Security-focused review — auth, injection, secrets, dependencies, OWASP Top 10 |
-| **dependency-audit** | Analyze dependencies for bloat, supply-chain risk, and unused packages |
-| **explain-codebase** | Deep explanation of unfamiliar code — traces data flow, names patterns, explains design decisions |
-| **why-we-do-this** | Explain the reasoning behind SBP conventions — connects rules to real failure modes |
+| **sbp-feature-development** | Build a new feature using test-driven development — clarify requirements, plan test coverage, drive through red/green/refactor, integrate, and verify |
+| **sbp-debug-investigation** | Systematically investigate, reproduce, and fix software bugs — frame symptoms, reliably reproduce, isolate the root cause, write a regression test, then fix |
+| **sbp-refactor** | Improve code structure without changing observable behavior — establish a safety net, plan small reversible steps, execute iteratively, validate no regressions |
+| **sbp-test-authoring** | Write tests that prove functionality works and catch regressions — structure each test clearly, exercise real behavior, keep the suite fast and reliable |
+| **sbp-secure-code-review** | Security-focused review — auth, injection, secrets, dependencies, OWASP Top 10 |
+| **sbp-dependency-audit** | Analyze dependencies for bloat, supply-chain risk, and unused packages |
+| **sbp-explain-codebase** | Deep explanation of unfamiliar code — traces data flow, names patterns, explains design decisions |
+| **sbp-why-we-do-this** | Explain the reasoning behind SBP conventions — connects rules to real failure modes |
 
 **Running:**
 
 | Skill | What it does |
 |-------|-------------|
-| **deploy-checklist** (default) | Full pre-deployment verification — rollback readiness, monitoring, communication, GO/NO-GO decision |
-| **safe-change** | Guided walkthrough for high-risk production changes — step-by-step with verification and rollback triggers |
-| **incident-review** | Blameless post-incident analysis — timeline, root cause (5 whys), contributing factors, concrete action items |
-| **runbook-author** | Generate operational runbooks from code and infrastructure — optimized for the 3 AM scenario |
-| **observability-check** | Verify monitoring, alerting, and logging coverage across the four pillars |
+| **sbp-deploy-checklist** (default) | Full pre-deployment verification — rollback readiness, monitoring, communication, GO/NO-GO decision |
+| **sbp-safe-change** | Guided walkthrough for high-risk production changes — step-by-step with verification and rollback triggers |
+| **sbp-incident-review** | Blameless post-incident analysis — timeline, root cause (5 whys), contributing factors, concrete action items |
+| **sbp-runbook-author** | Generate operational runbooks from code and infrastructure — optimized for the 3 AM scenario |
+| **sbp-observability-check** | Verify monitoring, alerting, and logging coverage across the four pillars |
 
 **Terraform / MCAF:**
 
@@ -201,10 +201,10 @@ Enable a skill:
 
 ```bash
 # With the CLI
-sbp-skills enable threat-model
+sbp-skills enable sbp-threat-model
 
 # Or manually — just copy the folder
-cp -r skills/threat-model ~/.claude/skills/
+cp -r skills/sbp-threat-model ~/.claude/skills/
 ```
 
 ---
@@ -368,15 +368,15 @@ sbp-skills validate packs/my-new-pack
 Skills are deeper workflows that engineers opt into.
 
 ```bash
-sbp-skills dev --skill my-new-skill
-# Edit skills/my-new-skill/SKILL.md
-sbp-skills validate skills/my-new-skill
+sbp-skills dev --skill sbp-my-new-skill
+# Edit skills/sbp-my-new-skill/SKILL.md
+sbp-skills validate skills/sbp-my-new-skill
 # Open a PR
 ```
 
 **Skill rules:**
 - SKILL.md with YAML frontmatter: `name`, `description` (50-1024 chars), `metadata.domain`, `metadata.lifecycle`
-- Name matches directory, lowercase with hyphens
+- Name matches directory, lowercase with hyphens, prefixed with `sbp-`
 - Write as if briefing a smart colleague — specific, actionable, opinionated
 - Include output format so the agent knows how to structure its response
 - Follows the [agentskills.io](https://agentskills.io) spec — compatible with skills.sh
