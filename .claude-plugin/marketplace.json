@@ -15,12 +15,12 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/architecture-review",
-        "./skills/deploy-checklist",
-        "./skills/incident-review",
-        "./skills/observability-check",
-        "./skills/runbook-author",
-        "./skills/safe-change"
+        "./skills/sbp-architecture-review",
+        "./skills/sbp-deploy-checklist",
+        "./skills/sbp-incident-review",
+        "./skills/sbp-observability-check",
+        "./skills/sbp-runbook-author",
+        "./skills/sbp-safe-change"
       ]
     },
     {
@@ -29,9 +29,9 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/threat-model",
-        "./skills/secure-code-review",
-        "./skills/dependency-audit"
+        "./skills/sbp-threat-model",
+        "./skills/sbp-secure-code-review",
+        "./skills/sbp-dependency-audit"
       ]
     },
     {
@@ -40,14 +40,14 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/explain-codebase",
-        "./skills/agent-architecture-review",
-        "./skills/why-we-do-this",
-        "./skills/feature-development",
-        "./skills/debug-investigation",
-        "./skills/refactor",
-        "./skills/test-planning",
-        "./skills/test-authoring"
+        "./skills/sbp-explain-codebase",
+        "./skills/sbp-agent-architecture-review",
+        "./skills/sbp-why-we-do-this",
+        "./skills/sbp-feature-development",
+        "./skills/sbp-debug-investigation",
+        "./skills/sbp-refactor",
+        "./skills/sbp-test-planning",
+        "./skills/sbp-test-authoring"
       ]
     },
     {
