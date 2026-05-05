@@ -1,5 +1,5 @@
 [skills]
-default = ["architecture-review", "deploy-checklist"]
+default = ["sbp-architecture-review", "sbp-deploy-checklist"]
 
 [commands]
 # Daily use — every engineer gets these
