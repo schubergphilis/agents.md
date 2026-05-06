@@ -17,8 +17,14 @@ Works with **Claude Code**, **GitHub Copilot**, and **OpenCode**. Compatible wit
 
 ### Option A: One-liner install
 
+> **Security note:** Piping directly to `bash` executes remote code without review. Download first, inspect, then run.
+
 ```bash
-curl -sSL https://raw.githubusercontent.com/schubergphilis/agents.md/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/schubergphilis/agents.md/main/install.sh -o /tmp/sbp-install.sh \
+  && cat /tmp/sbp-install.sh \
+  && printf '\nInstall sbp-skills? [y/N] ' \
+  && read -r yn \
+  && [[ $yn =~ ^[yY]$ ]] && bash /tmp/sbp-install.sh || echo "Aborted."
 ```
 
 Then in any project:
