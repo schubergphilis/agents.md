@@ -1,6 +1,6 @@
 ---
 name: sbp-incident-review
-description: Structured post-incident analysis — reconstruct timeline, assess impact, find root causes and contributing factors, capture what went well, and produce concrete action items. Blameless throughout. Use after any production incident.
+description: Use when a production incident has occurred — structured blameless post-incident analysis that reconstructs timeline, assesses impact, finds root causes, and produces concrete action items.
 metadata:
   domain: platform
   lifecycle: run

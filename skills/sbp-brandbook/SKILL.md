@@ -1,6 +1,6 @@
 ---
 name: sbp-brandbook
-description: Apply the Schuberg Philis visual brand identity when building any UI, HTML component, slide, document, or design asset for SBP. Use whenever output will represent SBP visually — colors, typography, logo, stylization, grids, photography, iconography. Ensures brand-consistent output without manual reminders.
+description: Use when building any UI, HTML component, slide, document, or design asset that will represent SBP visually — applies the Schuberg Philis visual brand identity (colors, typography, logo, stylization, grids, photography, iconography) to ensure brand-consistent output without manual reminders.
 metadata:
   domain: brand
   lifecycle: build

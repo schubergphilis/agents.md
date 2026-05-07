@@ -1,6 +1,6 @@
 ---
 name: sbp-secure-code-review
-description: Security-focused code review for mission-critical systems. Checks OWASP Top 10, authentication and authorization, input validation, secrets handling, dependency vulnerabilities, cryptography, and security logging. Frames findings by blast radius and customer impact.
+description: Use when reviewing code in mission-critical systems — checks OWASP Top 10, authentication and authorization, input validation, secrets handling, dependency vulnerabilities, cryptography, and security logging, framing findings by blast radius and customer impact.
 metadata:
   domain: security
   lifecycle: build

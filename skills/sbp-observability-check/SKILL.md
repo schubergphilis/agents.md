@@ -1,6 +1,6 @@
 ---
 name: sbp-observability-check
-description: Verify monitoring, alerting, and logging coverage across the four pillars — metrics, logs, traces, and alerts. Produces a coverage matrix with gaps, severity ratings, and recommended actions. Applies the 3 AM test to every component.
+description: Use when verifying monitoring, alerting, and logging coverage — checks the four pillars (metrics, logs, traces, alerts), produces a coverage matrix with gaps, severity ratings, and recommended actions, and applies the 3 AM test to every component.
 metadata:
   domain: platform
   lifecycle: run

@@ -1,6 +1,6 @@
 ---
 name: sbp-threat-model
-description: Structured threat modeling for systems and changes — identify assets, map attack surfaces, assess risks, and produce a prioritized threat matrix with concrete mitigations. Use before design reviews or when evaluating security posture.
+description: Use when preparing for a design review or when evaluating security posture — identifies assets, maps attack surfaces, assesses risks, and produces a prioritized threat matrix with concrete mitigations.
 metadata:
   domain: security
   lifecycle: plan

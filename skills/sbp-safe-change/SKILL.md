@@ -1,6 +1,6 @@
 ---
 name: sbp-safe-change
-description: Guided walkthrough for high-risk production changes — classify the change, assess risk, run pre-flight checks, build an execution plan with rollback triggers, and verify after completion. Use before any change that makes you nervous.
+description: Use when planning a high-risk production change — classifies the change, assesses risk, runs pre-flight checks, builds an execution plan with rollback triggers, and verifies after completion.
 metadata:
   domain: platform
   lifecycle: run
