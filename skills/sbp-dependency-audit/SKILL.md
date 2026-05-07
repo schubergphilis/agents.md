@@ -1,6 +1,6 @@
 ---
 name: sbp-dependency-audit
-description: Analyze project dependencies for bloat, supply-chain risk, and maintainability — classify each dependency, flag security concerns, identify unused or trivially replaceable packages, and produce a prioritized action plan. Use during security reviews or when reducing dependency surface.
+description: Use when conducting a security review, reducing dependency surface, or when dependencies may pose supply-chain, bloat, or maintainability risks.
 metadata:
   domain: security
   lifecycle: build

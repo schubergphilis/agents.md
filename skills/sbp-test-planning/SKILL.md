@@ -1,6 +1,6 @@
 ---
 name: sbp-test-planning
-description: Design comprehensive test coverage for a feature or change before implementation — identify behaviors, boundary cases, failure modes, and integration seams, then pick the right test type for each. Use before writing code, or before adding tests to untested code, especially in mission-critical systems where coverage gaps become incidents.
+description: Use when designing test coverage before writing code, or when adding tests to existing untested code — especially in mission-critical systems where coverage gaps become incidents.
 metadata:
   domain: cross-cutting
   lifecycle: plan

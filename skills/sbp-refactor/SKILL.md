@@ -1,6 +1,6 @@
 ---
 name: sbp-refactor
-description: Improve code structure, readability, or maintainability without changing observable behavior — establish a safety net, plan small reversible steps, execute iteratively, and validate no regressions. Use before a feature needs existing code to change shape, or when code has drifted into a state that makes further work expensive.
+description: Use when existing code needs to change shape before a feature, or when code drift is making further work expensive — improves structure and readability without changing observable behavior.
 metadata:
   domain: cross-cutting
   lifecycle: build

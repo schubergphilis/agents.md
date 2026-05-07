@@ -1,6 +1,6 @@
 ---
 name: sbp-runbook-author
-description: Generate operational runbooks from code and infrastructure that work at 3 AM when the on-call engineer is half-awake. Covers common failure scenarios with specific diagnosis and resolution steps, copy-pasteable commands, and clear escalation paths.
+description: Use when generating operational runbooks from code and infrastructure — produces runbooks that work at 3 AM, covering common failure scenarios with specific diagnosis and resolution steps, copy-pasteable commands, and clear escalation paths.
 metadata:
   domain: platform
   lifecycle: run

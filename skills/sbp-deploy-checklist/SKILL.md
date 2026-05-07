@@ -1,6 +1,6 @@
 ---
 name: sbp-deploy-checklist
-description: Pre-deployment verification against mission-critical criteria — rollback readiness, monitoring, change communication, and go/no-go decision. Use before any production deployment.
+description: Use when deploying to production — verifies rollback readiness, monitoring, and change communication against mission-critical criteria and produces a go/no-go decision.
 metadata:
   domain: platform
   lifecycle: run
