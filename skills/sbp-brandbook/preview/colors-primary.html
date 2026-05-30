@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Primary Colors</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 20px;
+      background: white;
+    }
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .swatch {
+      aspect-ratio: 1.5;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 12px;
+      position: relative;
+    }
+    .swatch-label {
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .swatch-hex {
+      font-size: 10px;
+      opacity: 0.8;
+      font-family: 'SF Mono', 'Consolas', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="color-grid">
+    <div class="swatch" style="background: #1E80ED; color: white;">
+      <div class="swatch-label">SBP Blue</div>
+      <div class="swatch-hex">#1E80ED</div>
+    </div>
+    <div class="swatch" style="background: #E8F2FD; color: #020C17;">
+      <div class="swatch-label">Soft Blue</div>
+      <div class="swatch-hex">#E8F2FD</div>
+    </div>
+    <div class="swatch" style="background: #082646; color: white;">
+      <div class="swatch-label">Space Gray</div>
+      <div class="swatch-hex">#082646</div>
+    </div>
+  </div>
+</body>
+</html>

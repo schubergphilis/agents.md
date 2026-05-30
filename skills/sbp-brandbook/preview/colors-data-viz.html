@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Visualization Colors</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 20px;
+      background: white;
+    }
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .swatch {
+      aspect-ratio: 1.2;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px;
+    }
+    .swatch-label {
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .swatch-hex {
+      font-size: 9px;
+      opacity: 0.8;
+      font-family: 'SF Mono', 'Consolas', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="color-grid">
+    <div class="swatch" style="background: #FF7000; color: white;">
+      <div class="swatch-label">Orange</div>
+      <div class="swatch-hex">#FF7000</div>
+    </div>
+    <div class="swatch" style="background: #2AC0A1; color: white;">
+      <div class="swatch-label">Green</div>
+      <div class="swatch-hex">#2AC0A1</div>
+    </div>
+    <div class="swatch" style="background: #6D5FF7; color: white;">
+      <div class="swatch-label">Violet</div>
+      <div class="swatch-hex">#6D5FF7</div>
+    </div>
+    <div class="swatch" style="background: #FF0089; color: white;">
+      <div class="swatch-label">Magenta</div>
+      <div class="swatch-hex">#FF0089</div>
+    </div>
+  </div>
+</body>
+</html>

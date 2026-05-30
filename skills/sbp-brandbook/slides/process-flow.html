@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Process Flow</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: white;
+    }
+    .slide {
+      width: 1280px;
+      height: 720px;
+      background: white;
+      position: relative;
+      font-family: 'TT Interphases', system-ui, sans-serif;
+    }
+    .eyebrow {
+      position: absolute;
+      left: 37.8px;
+      top: 30.24px;
+      font-family: 'TT Interphases Mono', monospace;
+      font-size: 13.33px;
+      font-weight: 700;
+      color: #1EE8ED;
+      letter-spacing: 0.02em;
+    }
+    .title {
+      position: absolute;
+      left: 37.8px;
+      top: 60.48px;
+      width: 1204.4px;
+      font-size: 29.33px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: #020C17;
+    }
+    .marker-bar {
+      position: absolute;
+      left: 37.8px;
+      top: 132.3px;
+      width: 56.7px;
+      height: 3.78px;
+      background: #1E80ED;
+    }
+    .subhead {
+      position: absolute;
+      left: 37.8px;
+      top: 144px;
+      width: 1204.4px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #020C17;
+    }
+    .process-container {
+      position: absolute;
+      left: 37.8px;
+      top: 212px;
+      width: 1204.4px;
+      height: 400px;
+    }
+    .steps {
+      display: flex;
+      gap: 30.24px;
+      margin-bottom: 37.8px;
+    }
+    .step-box {
+      flex: 1;
+      height: 75.6px;
+      background: #1E80ED;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13.33px;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      position: relative;
+    }
+    .step-box::after {
+      content: '→';
+      position: absolute;
+      right: -20px;
+      font-size: 24px;
+      color: #1E80ED;
+    }
+    .step-box:last-child::after {
+      content: '';
+    }
+    .descriptions {
+      display: flex;
+      gap: 30.24px;
+    }
+    .description {
+      flex: 1;
+    }
+    .description-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #020C17;
+      margin-bottom: 11.34px;
+    }
+    .description-text {
+      font-size: 12.67px;
+      line-height: 1.4;
+      color: #020C17;
+    }
+    .footer-left {
+      position: absolute;
+      left: 400.68px;
+      bottom: 49.14px;
+      font-size: 12px;
+      color: #082646;
+    }
+    .footer-page {
+      position: absolute;
+      right: 49.14px;
+      bottom: 49.14px;
+      font-size: 12px;
+      color: #5A6782;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="eyebrow">Methodology - P4.1 - Four-phase approach</div>
+    <div class="title">Our proven four-phase migration methodology</div>
+    <div class="marker-bar"></div>
+    <div class="subhead">Each phase builds on the previous with clear exit criteria</div>
+    
+    <div class="process-container">
+      <div class="steps">
+        <div class="step-box">Assess</div>
+        <div class="step-box">Design</div>
+        <div class="step-box">Build</div>
+        <div class="step-box">Run</div>
+      </div>
+      
+      <div class="descriptions">
+        <div class="description">
+          <div class="description-title">Assessment</div>
+          <div class="description-text">Inventory existing systems, identify dependencies, map data flows, and establish baseline performance metrics</div>
+        </div>
+        
+        <div class="description">
+          <div class="description-title">Design</div>
+          <div class="description-text">Define target architecture, select cloud services, plan security controls, and design migration wave strategy</div>
+        </div>
+        
+        <div class="description">
+          <div class="description-title">Build</div>
+          <div class="description-text">Provision infrastructure, configure automation, implement monitoring, and conduct pilot migrations</div>
+        </div>
+        
+        <div class="description">
+          <div class="description-title">Run</div>
+          <div class="description-text">Execute production cutover, validate performance, transfer operations, and optimize continuously</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-left">Schuberg Philis  |  Strategic planning</div>
+    <div class="footer-page">18</div>
+  </div>
+</body>
+</html>

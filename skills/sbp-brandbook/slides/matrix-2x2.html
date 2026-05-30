@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2x2 Matrix</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: white;
+    }
+    .slide {
+      width: 1280px;
+      height: 720px;
+      background: white;
+      position: relative;
+      font-family: 'TT Interphases', system-ui, sans-serif;
+    }
+    .eyebrow {
+      position: absolute;
+      left: 37.8px;
+      top: 30.24px;
+      font-family: 'TT Interphases Mono', monospace;
+      font-size: 13.33px;
+      font-weight: 700;
+      color: #1EE8ED;
+      letter-spacing: 0.02em;
+    }
+    .title {
+      position: absolute;
+      left: 37.8px;
+      top: 60.48px;
+      width: 1204.4px;
+      font-size: 29.33px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: #020C17;
+    }
+    .marker-bar {
+      position: absolute;
+      left: 37.8px;
+      top: 132.3px;
+      width: 56.7px;
+      height: 3.78px;
+      background: #1E80ED;
+    }
+    .subhead {
+      position: absolute;
+      left: 37.8px;
+      top: 144px;
+      width: 1204.4px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #020C17;
+    }
+    .matrix-container {
+      position: absolute;
+      left: 120.96px;
+      top: 204px;
+      width: 1078px;
+      height: 428px;
+    }
+    .axis-label-y {
+      position: absolute;
+      left: -80px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-90deg);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #5A6782;
+      white-space: nowrap;
+    }
+    .axis-label-x {
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #5A6782;
+    }
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 22.68px;
+      height: 100%;
+    }
+    .quadrant {
+      padding: 26.46px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+    }
+    .q1 { background: #E8F2FD; }
+    .q2 { background: #F3F6FB; }
+    .q3 { background: #F3F6FB; }
+    .q4 { background: #E8F2FD; }
+    .quadrant-title {
+      font-size: 18.67px;
+      font-weight: 900;
+      color: #020C17;
+      margin-bottom: 15.12px;
+    }
+    .quadrant-text {
+      font-size: 13.33px;
+      line-height: 1.4;
+      color: #020C17;
+    }
+    .footer-left {
+      position: absolute;
+      left: 400.68px;
+      bottom: 49.14px;
+      font-size: 12px;
+      color: #082646;
+    }
+    .footer-page {
+      position: absolute;
+      right: 49.14px;
+      bottom: 49.14px;
+      font-size: 12px;
+      color: #5A6782;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="eyebrow">Framework - P3.2 - Prioritization matrix</div>
+    <div class="title">Four migration strategies mapped by effort and impact</div>
+    <div class="marker-bar"></div>
+    <div class="subhead">Focus on high-impact, low-effort opportunities first</div>
+    
+    <div class="matrix-container">
+      <div class="axis-label-y">Business Impact</div>
+      <div class="axis-label-x">Implementation Effort</div>
+      
+      <div class="matrix-grid">
+        <div class="quadrant q1">
+          <div class="quadrant-title">Quick wins</div>
+          <div class="quadrant-text">Containerize stateless services. Move dev/test environments to cloud. Implement CI/CD for core applications.</div>
+        </div>
+        
+        <div class="quadrant q2">
+          <div class="quadrant-title">Strategic projects</div>
+          <div class="quadrant-text">Migrate mission-critical databases. Implement zero-trust security. Build unified observability platform.</div>
+        </div>
+        
+        <div class="quadrant q3">
+          <div class="quadrant-title">Low priority</div>
+          <div class="quadrant-text">Update internal documentation. Refactor legacy reporting tools. Consolidate monitoring dashboards.</div>
+        </div>
+        
+        <div class="quadrant q4">
+          <div class="quadrant-title">Major initiatives</div>
+          <div class="quadrant-text">Re-architect monolithic applications. Implement service mesh. Build disaster recovery automation.</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-left">Schuberg Philis  |  Strategic planning</div>
+    <div class="footer-page">15</div>
+  </div>
+</body>
+</html>

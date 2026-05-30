@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typography Hierarchy</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'TT Interphases', system-ui, sans-serif;
+      padding: 24px;
+      background: white;
+    }
+    .specimen {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #E8F2FD;
+    }
+    .specimen:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    .specimen-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #5A6782;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .cover-title {
+      font-size: 42px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: #082646;
+    }
+    .divider-title {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: #082646;
+    }
+    .content-title {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: #020C17;
+    }
+    .subhead {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1E80ED;
+    }
+    .body-text {
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 1.4;
+      color: #020C17;
+    }
+  </style>
+</head>
+<body>
+  <div class="specimen">
+    <div class="specimen-label">Cover (58pt Black)</div>
+    <div class="cover-title">Mission-critical infrastructure</div>
+  </div>
+  
+  <div class="specimen">
+    <div class="specimen-label">Divider (36pt Black)</div>
+    <div class="divider-title">Three strategic options</div>
+  </div>
+  
+  <div class="specimen">
+    <div class="specimen-label">Content title (22pt Black)</div>
+    <div class="content-title">Four capabilities enable the transformation</div>
+  </div>
+  
+  <div class="specimen">
+    <div class="specimen-label">Subhead (12pt Bold)</div>
+    <div class="subhead">Ranked by business impact and technical feasibility</div>
+  </div>
+  
+  <div class="specimen">
+    <div class="specimen-label">Body (11pt Regular)</div>
+    <div class="body-text">Each option was assessed against five criteria: strategic alignment, operational risk, resource requirements, implementation timeline, and expected ROI.</div>
+  </div>
+</body>
+</html>

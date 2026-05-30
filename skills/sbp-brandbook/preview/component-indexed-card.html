@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indexed Card</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      padding: 20px;
+      background: #F3F6FB;
+      font-family: 'TT Interphases', system-ui, sans-serif;
+    }
+    .card {
+      width: 220px;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(2, 12, 23, 0.08);
+    }
+    .card-header {
+      background: #1E80ED;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-number {
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+    }
+    .card-body {
+      background: white;
+      padding: 16px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: #020C17;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .card-text {
+      font-size: 10px;
+      line-height: 1.4;
+      color: #020C17;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-number">01</div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Assess current state</div>
+      <div class="card-text">Map existing infrastructure and identify technical debt across all systems</div>
+    </div>
+  </div>
+</body>
+</html>

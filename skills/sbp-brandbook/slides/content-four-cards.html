@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Slide</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: white;
+    }
+    .slide {
+      width: 1280px;
+      height: 720px;
+      background: white;
+      position: relative;
+      font-family: 'TT Interphases', system-ui, sans-serif;
+    }
+    .eyebrow {
+      position: absolute;
+      left: 37.8px;
+      top: 30.24px;
+      font-family: 'TT Interphases Mono', monospace;
+      font-size: 13.33px;
+      font-weight: 700;
+      color: #1EE8ED;
+      letter-spacing: 0.02em;
+    }
+    .title {
+      position: absolute;
+      left: 37.8px;
+      top: 60.48px;
+      width: 1204.4px;
+      font-size: 29.33px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: #020C17;
+    }
+    .marker-bar {
+      position: absolute;
+      left: 37.8px;
+      top: 132.3px;
+      width: 56.7px;
+      height: 3.78px;
+      background: #1E80ED;
+    }
+    .subhead {
+      position: absolute;
+      left: 37.8px;
+      top: 144px;
+      width: 1204.4px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #020C17;
+    }
+    .content-zone {
+      position: absolute;
+      left: 37.8px;
+      top: 174px;
+      width: 1204.4px;
+      height: 498px;
+    }
+    .footer-left {
+      position: absolute;
+      left: 400.68px;
+      bottom: 49.14px;
+      font-size: 12px;
+      color: #082646;
+    }
+    .footer-page {
+      position: absolute;
+      right: 49.14px;
+      bottom: 49.14px;
+      font-size: 12px;
+      color: #5A6782;
+    }
+    
+    /* Content styling */
+    .card-row {
+      display: flex;
+      gap: 22.68px;
+    }
+    .card {
+      flex: 1;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .card-header {
+      background: #1E80ED;
+      height: 52.92px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-number {
+      font-size: 24px;
+      font-weight: 900;
+      color: white;
+    }
+    .card-body {
+      background: white;
+      padding: 22.68px;
+      height: 434px;
+      border: 1px solid #E8F2FD;
+      border-top: none;
+    }
+    .card-title {
+      font-size: 17.33px;
+      font-weight: 900;
+      color: #020C17;
+      margin-bottom: 15.12px;
+      line-height: 1.2;
+    }
+    .card-text {
+      font-size: 13.33px;
+      line-height: 1.4;
+      color: #020C17;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="eyebrow">Assessment framework - P2.4 - Four-part evaluation</div>
+    <div class="title">Four capabilities enable the transformation</div>
+    <div class="marker-bar"></div>
+    <div class="subhead">Ranked by business impact and technical feasibility</div>
+    
+    <div class="content-zone">
+      <div class="card-row">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-number">01</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Cloud infrastructure automation</div>
+            <div class="card-text">Terraform and Kubernetes-based deployment pipelines reduce manual intervention and improve reliability across all environments</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-number">02</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Observability platform</div>
+            <div class="card-text">Unified monitoring, logging, and tracing provide real-time visibility into system health and performance</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-number">03</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Security by design</div>
+            <div class="card-text">Zero-trust architecture and automated compliance checks built into every deployment workflow</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div class="card-number">04</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Team enablement</div>
+            <div class="card-text">Self-service tooling and training programs accelerate adoption and reduce dependency on specialists</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-left">Schuberg Philis  |  Strategic planning</div>
+    <div class="footer-page">12</div>
+  </div>
+</body>
+</html>

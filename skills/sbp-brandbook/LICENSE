@@ -37,6 +37,16 @@ Prohibited use without prior written permission from Schuberg Philis
 - Training, fine-tuning, or evaluation of external AI models on this
   content.
 
+Third-party fonts
+-----------------
+
+The web fonts bundled in `fonts/` (TT Interphases / TT Interphases Mono) are
+the commercial property of TypeType, licensed to Schuberg Philis. They are
+included here only to render SBP-branded artifacts and remain subject to
+TypeType's license terms in addition to the restrictions above. Do not extract,
+redistribute, or reuse them outside of work for Schuberg Philis. The full
+desktop family is not redistributed here — see `fonts/README.md`.
+
 Trademarks
 ----------
 

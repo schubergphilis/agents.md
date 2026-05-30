@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signal Colors</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 20px;
+      background: white;
+    }
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .swatch {
+      aspect-ratio: 2;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 14px;
+    }
+    .swatch-label {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .swatch-hex {
+      font-size: 10px;
+      opacity: 0.8;
+      font-family: 'SF Mono', 'Consolas', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="color-grid">
+    <div class="swatch" style="background: #0DEBA5; color: #020C17;">
+      <div class="swatch-label">True Green</div>
+      <div class="swatch-hex">#0DEBA5</div>
+    </div>
+    <div class="swatch" style="background: #FF6D8C; color: white;">
+      <div class="swatch-label">False Red</div>
+      <div class="swatch-hex">#FF6D8C</div>
+    </div>
+  </div>
+</body>
+</html>
