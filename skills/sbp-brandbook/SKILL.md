@@ -1,6 +1,7 @@
 ---
 name: sbp-brandbook
 description: Use when building any UI, HTML component, slide, document, or design asset that will represent SBP visually — applies the Schuberg Philis visual brand identity (colors, typography, logo, stylization, grids, photography, iconography) to ensure brand-consistent output without manual reminders.
+user-invocable: true
 metadata:
   domain: brand
   lifecycle: build
@@ -8,10 +9,11 @@ metadata:
   license: proprietary
 ---
 
-> **License notice:** This skill and all assets under `assets/` are the
-> proprietary intellectual property of Schuberg Philis and are **not**
-> covered by the Apache 2.0 license that applies to the rest of this
-> repository. See `skills/sbp-brandbook/LICENSE` for terms. Do not
+> **License notice:** This skill and all bundled assets (`assets/`, `fonts/`,
+> `slides/`, `preview/`, `colors_and_type.css`) are proprietary to Schuberg
+> Philis and are **not** covered by the Apache 2.0 license that applies to the
+> rest of this repository. The `fonts/` are commercial TT Interphases web fonts
+> licensed from TypeType. See `skills/sbp-brandbook/LICENSE` for terms. Do not
 > redistribute or use outside of work for Schuberg Philis.
 
 # SBP Brand — Full Spec
@@ -19,6 +21,31 @@ metadata:
 Apply these guidelines when building any UI, HTML component, slide, document, or design asset for Schuberg Philis.
 
 For the full human-readable brand reference, see [brandbook.schubergphilis.com](https://brandbook.schubergphilis.com/8d157b10c/p/142798-our-brand-book).
+
+## How to use this skill
+
+When building visual artifacts (slides, mocks, throwaway prototypes), copy the
+bundled assets out and produce static HTML the user can open in a browser. When
+working in production code, copy the assets and apply the rules below to design
+on-brand. If invoked without specific guidance, ask what the user wants to build,
+then act as an expert SBP designer producing HTML artifacts or production code.
+
+## Bundled resources
+
+| File / dir | Use |
+|---|---|
+| `README.md` | Human-readable brand reference and design rationale |
+| `colors_and_type.css` | Import-ready color tokens + typography variables (`@font-face` + CSS custom properties) |
+| `fonts/` | TT Interphases web fonts (WOFF2 subset). Full family: see `fonts/README.md` |
+| `assets/` | Logos (new system) + stylization shapes (slash/square/corner/button) |
+| `slides/` | Six HTML slide templates (cover, divider, four-cards, quote, matrix, process) |
+| `preview/` | Design-system reference cards (colors, type, spacing, components) |
+
+Import the CSS for instant on-brand tokens:
+```html
+<link rel="stylesheet" href="colors_and_type.css">
+```
+Variables exposed: `--font-primary`, `--font-mono`, and the color tokens below.
 
 ---
 
@@ -118,11 +145,33 @@ Match asset variant (blue/dark/light) to the background it sits on.
 
 ---
 
+## The marker bar
+
+The **1.5 cm × 0.1 cm** horizontal bar is the signature SBP element — it appears
+on every slide and marks content as Schuberg Philis. It is **not decorative**.
+
+- **SBP Blue** on light backgrounds; **Joyful Yellow** on dark backgrounds
+- Positioned between title and subhead (or between subhead and content)
+- Always 1.5 cm wide — **never** full-width
+
+See `preview/marker-bar.html` for the reference rendering.
+
+---
+
 ## Logo
 
-**Two SVG files** (bundled in `assets/`):
-- `SBP_logo_black.svg` — use on SBP Blue backgrounds (default) and light backgrounds
-- `SBP_logo_white.svg` — use on dark backgrounds and dark images
+The current logo system has three background-matched variants, each as SVG and
+PNG (bundled in `assets/`). Match the variant to the background it sits on:
+
+| Variant | Files | Use on |
+|---|---|---|
+| On white | `Logo-1-OnWhite.svg`, `Logo-1-OnWhite.png` | White / light backgrounds |
+| On SBP Blue | `Logo-2-OnBlue.svg`, `Logo-2-OnBlue.png` | SBP Blue backgrounds (default brand surface) |
+| On dark | `Logo-3-OnDark.svg`, `Logo-3-OnDark.png` | Space Gray / Midnight Dark / dark images |
+
+**With payoff line** (full lockup, SVG only): `Logo+payoff-light.svg`,
+`Logo+payoff-blue.svg`, `Logo+payoff-dark.svg`. Use the payoff lockup for
+covers, title pages, and brand-forward surfaces; the plain mark elsewhere.
 
 **Margins:** 50% of logo height (nav/banners), 100% (objects), 200% (center of canvas).
 
@@ -139,6 +188,50 @@ Match asset variant (blue/dark/light) to the background it sits on.
 - **Gutter:** 1 grid column between columns
 - **Maximum 5 elements per layout** (logo, image, title, text, labels)
 - One container width across all pages of a document
+
+---
+
+## Slides & decks
+
+Six ready-to-use HTML templates live in `slides/` — copy and adapt them:
+`cover-slide`, `chapter-divider`, `content-four-cards`, `pull-quote`,
+`matrix-2x2`, `process-flow`.
+
+**Slide type scale** (presentation sizes, distinct from the UI scale above):
+
+| Element | Weight | Size |
+|---|---|---|
+| Cover | Black 900 | 58pt |
+| Chapter divider | Black 900 | 36pt |
+| Content title | Black 900 | 22–26pt |
+| Big stat | Black 900 | 36–48pt |
+| Subhead | Bold 700 | 12pt |
+| Body | Regular 400 | 9.5–11pt |
+| Eyebrow | Mono Bold | 10pt |
+
+**Sandwich structure:** decks breathe **dark → light → dark**. Open dark (cover),
+transition to light (content), return to dark (chapter dividers, statements).
+Light slides are ≈78% of content (White or Soft Blue); dark slides use Space
+Gray full-bleed. No gradients, textures, or photographs as backgrounds.
+
+**Card constructions** (see `preview/component-*.html`):
+1. **Indexed cards** — Blue header strip with white number (01, 02…) + white body. Use for enumerating 2–5 items.
+2. **Pale panel cards** — Soft blue fill, no header strip. Use for matrices and frameworks.
+3. **Decision cards** — Space Gray body with yellow accents + full-width yellow recommendation bar. Use for recommendations.
+
+**Card rules:** no drop shadows, no borders — cards differentiate by fill color
+only. Flat, layered composition.
+
+---
+
+## Content & writing
+
+- **Sentence case everywhere** — titles, eyebrows, subheads, body. Never title case; never all caps (rare axis labels excepted).
+- **Insight-first titles** — the title carries the message, not the category. "Three options, one recommendation — with consequences named", not "Decision options".
+- **Header system** — every content slide: **Eyebrow** (context) → **Title** (insight) → **Subhead** (how to read it).
+- **Yellow signals decisions only** — recommendation bars, highlighted cells, the chosen option. Never passive decoration.
+- **Separators** — middle-hyphen with spaces in eyebrow metadata (`M01.58 - Matrix - Maturity Heat`); pipes with spaces in footers (`Schuberg Philis  |  M01 FOUNDATIONS`); em dashes in titles only.
+- **No emoji.** Third person with implied "you" — no "I"/"we".
 
 ---
 

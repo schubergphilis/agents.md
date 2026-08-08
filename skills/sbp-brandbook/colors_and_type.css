@@ -1,0 +1,370 @@
+/* Schuberg Philis Design System — Colors & Typography */
+/* Web fonts (WOFF2) for the weights used below are bundled in fonts/.
+   TT Interphases is a commercial TypeType typeface. The full desktop
+   family (OTF/TTF, all weights/italics) is NOT redistributed here —
+   obtain it from the SBP brandbook: https://brandbook.schubergphilis.com */
+
+/* ============================================
+   FONT FACE DECLARATIONS
+   ============================================ */
+
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('fonts/TT Interphases Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('fonts/TT Interphases Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('fonts/TT Interphases DemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('fonts/TT Interphases Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('fonts/TT Interphases Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('fonts/TT Interphases Black Italic.woff2') format('woff2');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interphases Mono';
+  src: url('fonts/TT Interphases Mono Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interphases Mono';
+  src: url('fonts/TT Interphases Mono Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('fonts/TT Interphases Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================
+   COLOR TOKENS
+   ============================================ */
+
+:root {
+  /* PRIMARY BRAND COLORS */
+  --sbp-blue: #1E80ED;           /* Primary brand color — backgrounds, accents, highlights */
+  --soft-blue: #E8F2FD;          /* Calm background for content, tables, frameworks */
+  --tropical-turquoise: #1EE8ED; /* Secondary expressive — eyebrows, technical accents */
+  
+  /* NEUTRALS */
+  --midnight-dark: #020C17;      /* Primary text on light backgrounds */
+  --space-gray: #082646;         /* Strong backgrounds for covers, dividers, cards */
+  --white: #FFFFFF;              /* Clean backgrounds and text on dark */
+  
+  /* EXPRESSIVE ACCENTS */
+  --joyful-yellow: #FFDB4E;      /* Decision markers, tags, emphasis */
+  --orange: #FF7000;             /* Data viz, urgency, constraints */
+  --green: #2AC0A1;              /* Data viz, progress, emphasis */
+  --violet: #6D5FF7;             /* Data viz, category distinction */
+  --magenta: #FF0089;            /* Data viz, high-energy accents */
+  
+  /* SIGNAL COLORS */
+  --true-green: #0DEBA5;         /* Success, validation, positive states */
+  --false-red: #FF6D8C;          /* Error, risk, negative states */
+  
+  /* TINTED BACKGROUNDS */
+  --pale-blue: #F3F6FB;          /* Rare full-slide tint */
+  
+  /* UTILITY GRAYS */
+  --gray-medium: #5A6782;        /* Secondary text, axis labels */
+  --gray-light: #AACBEF;         /* Subtle text on dark backgrounds */
+  --blue-pale: #CFE0F7;          /* List text on dark cards */
+  
+  /* SEMANTIC ALIASES */
+  --color-primary: var(--sbp-blue);
+  --color-secondary: var(--tropical-turquoise);
+  --color-accent: var(--joyful-yellow);
+  --color-success: var(--true-green);
+  --color-error: var(--false-red);
+  --color-warning: var(--orange);
+  
+  --bg-light: var(--white);
+  --bg-calm: var(--soft-blue);
+  --bg-dark: var(--space-gray);
+  --bg-darkest: var(--midnight-dark);
+  
+  --text-primary-light: var(--midnight-dark);
+  --text-primary-dark: var(--white);
+  --text-secondary-light: var(--gray-medium);
+  --text-secondary-dark: var(--gray-light);
+}
+
+/* ============================================
+   TYPOGRAPHY TOKENS
+   ============================================ */
+
+:root {
+  /* FONT FAMILIES */
+  --font-primary: 'TT Interphases', system-ui, -apple-system, sans-serif;
+  --font-mono: 'TT Interphases Mono', 'SF Mono', 'Monaco', 'Consolas', monospace;
+  
+  /* FONT WEIGHTS */
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 900;
+  
+  /* FONT SIZES (slide scale, 96 DPI = 1pt = 1.333px) */
+  --text-eyebrow: 13.33px;       /* 10pt */
+  --text-footer: 12px;           /* 9pt */
+  --text-small: 12.67px;         /* 9.5pt */
+  --text-body: 13.33px;          /* 10pt */
+  --text-body-large: 14.67px;    /* 11pt */
+  --text-card-title: 17.33px;    /* 13pt */
+  --text-subhead: 16px;          /* 12pt */
+  --text-section: 18.67px;       /* 14pt */
+  --text-number: 24px;           /* 18pt */
+  --text-title-content: 29.33px; /* 22pt */
+  --text-title-large: 34.67px;   /* 26pt */
+  --text-title-divider: 48px;    /* 36pt */
+  --text-stat: 48px;             /* 36pt (can go to 64px/48pt) */
+  --text-quote: 45.33px;         /* 34pt */
+  --text-cover: 77.33px;         /* 58pt */
+  
+  /* LINE HEIGHTS */
+  --leading-tight: 1.1;
+  --leading-snug: 1.2;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.6;
+}
+
+/* ============================================
+   SEMANTIC TYPOGRAPHY CLASSES
+   ============================================ */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  font-weight: var(--weight-bold);
+  text-transform: none; /* Sentence case */
+  letter-spacing: 0.02em;
+  color: var(--tropical-turquoise);
+}
+
+.eyebrow-dark {
+  color: var(--soft-blue);
+}
+
+.title-content {
+  font-family: var(--font-primary);
+  font-size: var(--text-title-content);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-tight);
+  color: var(--midnight-dark);
+}
+
+.title-divider {
+  font-family: var(--font-primary);
+  font-size: var(--text-title-divider);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-tight);
+  color: var(--white);
+}
+
+.title-cover {
+  font-family: var(--font-primary);
+  font-size: var(--text-cover);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-tight);
+  color: var(--white);
+}
+
+.subhead {
+  font-family: var(--font-primary);
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-bold);
+  color: var(--midnight-dark);
+}
+
+.subhead-accent {
+  color: var(--sbp-blue);
+}
+
+.card-header {
+  font-family: var(--font-primary);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-snug);
+  color: var(--sbp-blue);
+}
+
+.body {
+  font-family: var(--font-primary);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--midnight-dark);
+}
+
+.body-large {
+  font-size: var(--text-body-large);
+}
+
+.body-dark {
+  color: var(--white);
+}
+
+.stat {
+  font-family: var(--font-primary);
+  font-size: var(--text-stat);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-tight);
+  color: var(--sbp-blue);
+}
+
+.quote {
+  font-family: var(--font-primary);
+  font-size: var(--text-quote);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-snug);
+  color: var(--white);
+}
+
+.footer-text {
+  font-family: var(--font-primary);
+  font-size: var(--text-footer);
+  font-weight: var(--weight-regular);
+  color: var(--space-gray);
+}
+
+.footer-page {
+  font-family: var(--font-primary);
+  font-size: var(--text-footer);
+  font-weight: var(--weight-regular);
+  color: var(--gray-medium);
+}
+
+/* ============================================
+   SPACING TOKENS
+   ============================================ */
+
+:root {
+  /* SLIDE MARGINS (in cm converted to px at 96 DPI: 1cm = 37.8px) */
+  --margin-content: 37.8px;      /* 1.0cm */
+  --margin-divider: 56.7px;      /* 1.5cm */
+  --margin-top: 30.24px;         /* 0.8cm */
+  --margin-bottom: 49.14px;      /* 1.3cm */
+  
+  /* SPACING SCALE */
+  --space-xs: 11.34px;           /* 0.3cm */
+  --space-sm: 15.12px;           /* 0.4cm */
+  --space-md: 22.68px;           /* 0.6cm */
+  --space-lg: 26.46px;           /* 0.7cm */
+  --space-xl: 37.8px;            /* 1.0cm */
+  --space-2xl: 45.36px;          /* 1.2cm */
+  --space-3xl: 56.7px;           /* 1.5cm */
+  
+  /* COMPONENT SPACING */
+  --gap-cards: var(--space-md);      /* 0.6cm between cards */
+  --gap-rows: var(--space-2xl);      /* 1.2cm between numbered rows */
+  --padding-card: var(--space-md);   /* 0.6-0.7cm inner card padding */
+  
+  /* MARKER BAR */
+  --marker-width: 56.7px;            /* 1.5cm */
+  --marker-height: 3.78px;           /* 0.1cm */
+  
+  /* SLIDE DIMENSIONS (in px) */
+  --slide-width: 1280px;             /* 33.87cm */
+  --slide-height: 720px;             /* 19.05cm */
+}
+
+/* ============================================
+   LAYOUT UTILITIES
+   ============================================ */
+
+.slide-canvas {
+  width: var(--slide-width);
+  height: var(--slide-height);
+  position: relative;
+  background: var(--white);
+}
+
+.content-zone {
+  position: absolute;
+  left: var(--margin-content);
+  top: 174px; /* 4.6cm */
+  width: calc(var(--slide-width) - (var(--margin-content) * 2));
+  height: calc(672px - 174px); /* 17.8cm - 4.6cm */
+}
+
+.marker-bar {
+  width: var(--marker-width);
+  height: var(--marker-height);
+  background: var(--sbp-blue);
+}
+
+.marker-bar-yellow {
+  background: var(--joyful-yellow);
+}
+
+/* ============================================
+   USAGE NOTES
+   ============================================ */
+
+/*
+  This CSS provides the foundation for Schuberg Philis slide designs.
+  
+  Key principles:
+  - Use sentence case throughout (not title case, not all caps)
+  - The 1.5cm × 0.1cm marker bar is mandatory on every slide
+  - Yellow only for decisions and recommendations
+  - SBP Blue is the primary accent
+  - Tropical Turquoise for eyebrows and technical accents
+  - Space Gray for dark backgrounds (not Midnight Dark)
+  
+  Typography hierarchy:
+  - Cover: 58pt Black
+  - Divider: 36pt Black
+  - Content title: 22-26pt Black
+  - Subhead: 12pt Bold
+  - Body: 9.5-11pt Regular
+  - Eyebrow: 10pt Mono Bold
+  
+  For detailed layout specs, see the source guide.
+*/

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marker Bar</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 24px;
+      background: white;
+    }
+    .section {
+      margin-bottom: 28px;
+    }
+    .section:last-child {
+      margin-bottom: 0;
+    }
+    .label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #5A6782;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .marker-blue {
+      width: 56.7px;
+      height: 3.78px;
+      background: #1E80ED;
+      border-radius: 1px;
+    }
+    .marker-yellow {
+      width: 56.7px;
+      height: 3.78px;
+      background: #FFDB4E;
+      border-radius: 1px;
+    }
+    .dark-bg {
+      background: #082646;
+      padding: 16px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="section">
+    <div class="label">Blue marker (light slides)</div>
+    <div class="marker-blue"></div>
+  </div>
+  
+  <div class="section">
+    <div class="label">Yellow marker (dark slides)</div>
+    <div class="dark-bg">
+      <div class="marker-yellow"></div>
+    </div>
+  </div>
+</body>
+</html>

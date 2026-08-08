@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decision Card</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      padding: 20px;
+      background: #F3F6FB;
+      font-family: 'TT Interphases', system-ui, sans-serif;
+    }
+    .card {
+      width: 240px;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(2, 12, 23, 0.12);
+    }
+    .card-body {
+      background: #082646;
+      padding: 16px;
+    }
+    .card-eyebrow {
+      font-size: 9px;
+      font-weight: 700;
+      color: #FFDB4E;
+      margin-bottom: 8px;
+      letter-spacing: 0.03em;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .card-list {
+      list-style: none;
+    }
+    .card-list li {
+      font-size: 10px;
+      color: #CFE0F7;
+      margin-bottom: 6px;
+      padding-left: 12px;
+      position: relative;
+      line-height: 1.3;
+    }
+    .card-list li:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 6px;
+      height: 6px;
+      background: #FFDB4E;
+      border-radius: 1px;
+    }
+    .recommendation-bar {
+      background: #FFDB4E;
+      padding: 10px 16px;
+      text-align: center;
+    }
+    .recommendation-text {
+      font-size: 10px;
+      font-weight: 700;
+      color: #082646;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-body">
+      <div class="card-eyebrow">OPTION C</div>
+      <div class="card-title">Hybrid cloud migration</div>
+      <ul class="card-list">
+        <li>Lowest operational risk</li>
+        <li>18-month timeline</li>
+        <li>Best ROI after year two</li>
+      </ul>
+    </div>
+    <div class="recommendation-bar">
+      <div class="recommendation-text">RECOMMENDED</div>
+    </div>
+  </div>
+</body>
+</html>

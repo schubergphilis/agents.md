@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spacing System</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      padding: 24px;
+      background: white;
+      font-family: system-ui, sans-serif;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+    .bar {
+      height: 24px;
+      background: #1E80ED;
+      border-radius: 3px;
+    }
+    .label {
+      font-size: 10px;
+      color: #5A6782;
+      font-weight: 600;
+      min-width: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <div class="label">0.3cm (xs)</div>
+    <div class="bar" style="width: 11.34px;"></div>
+  </div>
+  <div class="row">
+    <div class="label">0.6cm (md)</div>
+    <div class="bar" style="width: 22.68px;"></div>
+  </div>
+  <div class="row">
+    <div class="label">1.0cm (xl)</div>
+    <div class="bar" style="width: 37.8px;"></div>
+  </div>
+  <div class="row">
+    <div class="label">1.5cm (3xl)</div>
+    <div class="bar" style="width: 56.7px;"></div>
+  </div>
+</body>
+</html>

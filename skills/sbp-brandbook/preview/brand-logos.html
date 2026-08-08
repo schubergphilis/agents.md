@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logos</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      padding: 20px;
+      background: white;
+      font-family: system-ui, sans-serif;
+    }
+    .logo-row {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .logo-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .logo-box {
+      height: 70px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 12px 16px;
+      border: 1px solid #E8F2FD;
+    }
+    .logo-box.white { background: #FFFFFF; border: 1px solid #E8F2FD; }
+    .logo-box.blue { background: #1E80ED; border: none; }
+    .logo-box.dark { background: #082646; border: none; }
+    .logo-box img {
+      height: 100%;
+      object-fit: contain;
+      object-position: left center;
+    }
+    .label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #5A6782;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-row">
+    <div class="logo-item">
+      <div class="label">Logo on white background</div>
+      <div class="logo-box white">
+        <img src="../assets/Logo-1-OnWhite.png" alt="Schuberg Philis logo on white">
+      </div>
+    </div>
+    
+    <div class="logo-item">
+      <div class="label">Logo on SBP blue background</div>
+      <div class="logo-box blue">
+        <img src="../assets/Logo-2-OnBlue.png" alt="Schuberg Philis logo on blue">
+      </div>
+    </div>
+    
+    <div class="logo-item">
+      <div class="label">Logo on dark background</div>
+      <div class="logo-box dark">
+        <img src="../assets/Logo-3-OnDark.png" alt="Schuberg Philis logo on dark">
+      </div>
+    </div>
+  </div>
+</body>
+</html>
