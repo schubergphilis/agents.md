@@ -109,10 +109,10 @@ You get a prioritised list of risks before any code changes. Each finding has a 
 
 **Context:** You want a security review of a codebase before it ships.
 
-First, enable the skill from the CLI (or via the plugin install — same result):
+First, install the skill (or use the plugin install — same result):
 
 ```bash
-sbp-skills enable sbp-secure-code-review
+DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill sbp-secure-code-review
 ```
 
 Then in Claude Code:
@@ -283,10 +283,10 @@ The output is a structured report with action items, owners, and deadlines, read
 
 ## What's next
 
-Run `sbp-skills list` to browse everything available, or look through the `skills/` directory in this repo. If you find a workflow that is not covered, scaffold a new skill with:
+Run `DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --list` to browse everything available, or look through the `skills/` directory in this repo. If you find a workflow that is not covered, scaffold a new skill with:
 
 ```bash
-sbp-skills dev --skill sbp-your-skill-name
+DISABLE_TELEMETRY=1 npx skills init skills/sbp-your-skill-name
 ```
 
 Then open a PR.

@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+### Breaking changes
+
+The custom tooling has been removed: `install.sh`, the `sbp-skills` CLI, and `scripts/sync-terraform-skills.sh`. Install and update skills with [`npx skills`](https://skills.sh) instead:
+
+```bash
+DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md
+DISABLE_TELEMETRY=1 npx skills update
+```
+
+Copy the baseline, packs, and commands by hand (see README, Option B). The Terraform/MCAF skills are now edited directly in this repo.
+
 ## [1.0.0] — 2026-05-05
 
 ### Breaking changes
