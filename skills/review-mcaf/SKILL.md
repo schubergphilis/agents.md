@@ -196,7 +196,7 @@ Hard rules on the review prose:
 When reviewing more than ~5 modules at once:
 
 1. List the target modules. If last-pushed dates are easy to derive (e.g. from `git log`), include them in the section header for grounding.
-2. Bucket into groups of ~10. Dispatch **parallel subagents** (one per bucket) via the `Task` / `Agent` tool. Each subagent gets:
+2. Bucket into groups of ~10. Dispatch **parallel subagents** (one per bucket) via the `Agent` tool. Each subagent gets:
    - The review dimensions + anti-pattern hunts (link to this skill or inline them).
    - The list of module paths for its bucket.
    - The exact output format.

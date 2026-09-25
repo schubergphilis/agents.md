@@ -10,7 +10,7 @@ Run at least one static security scanner in pre-commit and in CI. Common choices
 | Tool | Strengths | Notes |
 |---|---|---|
 | **Checkov** | Broad coverage (Terraform, CFN, K8s, Dockerfile). SARIF output. | De-facto standard. |
-| **tfsec** | Fast, Terraform-focused. | Now largely merged into Trivy. |
+| **tfsec** | Fast, Terraform-focused. | Deprecated — use Trivy (`trivy config`) instead. |
 | **Trivy** | One tool for Terraform + containers + filesystems. | Good if you already use it for container scanning. |
 | **terrascan** | Policy-as-code via Rego. | Useful when you have OPA experience. |
 

@@ -31,7 +31,7 @@ Detailed guidance lives in `references/`:
 - [`code-patterns.md`](references/code-patterns.md) — block ordering, `count` vs `for_each`, `optional(…)`, `moved {}`, version management.
 - [`testing.md`](references/testing.md) — the decision matrix across `terraform validate`, plan tests, native `terraform test`, and Terratest.
 - [`ci-cd.md`](references/ci-cd.md) — GitHub Actions shape, conventional commits, release-drafter, pre-commit.
-- [`security-compliance.md`](references/security-compliance.md) — checkov/tfsec/trivy, secrets hygiene, state security.
+- [`security-compliance.md`](references/security-compliance.md) — checkov/trivy, secrets hygiene, state security.
 - [`quick-reference.md`](references/quick-reference.md) — cheat sheets, decision flowchart, troubleshooting.
 
 ## Core principles
@@ -146,7 +146,7 @@ resource "aws_s3_bucket" "default" {
 
 Use the layered strategy in [`references/testing.md`](references/testing.md):
 
-1. **Pre-commit**: `terraform fmt`, `tflint`, `terraform validate`, `terraform_docs`, `checkov`/`tfsec`/`trivy`.
+1. **Pre-commit**: `terraform fmt`, `tflint`, `terraform validate`, `terraform_docs`, `checkov`/`trivy`.
 2. **CI static**: same tools, plus per-example `terraform init && terraform validate`.
 3. **Native `terraform test`**: `mock_provider`, `run` blocks, `assert`/`expect_failures`. Free of cloud credentials, fast.
 4. **Terratest** (Go): only when you need real apply against a real cloud.
