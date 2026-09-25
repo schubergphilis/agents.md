@@ -2,22 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Build and Test
+## Validate
 
 ```bash
-# Run all tests
-python3 -m pytest tests/ -v
+# All skills must be discovered (count must match `ls skills | wc -l`)
+DISABLE_TELEMETRY=1 NO_COLOR=1 npx -y skills add ./ --list
 
-# Run a single test file
-python3 -m pytest tests/test_fragment.py -v
-
-# Run a single test
-python3 -m pytest tests/test_fragment.py::test_insert_baseline -v
+# Pack fragments must stay under 300 words
+wc -w packs/*/AGENTS.md
 ```
 
 ## Architecture
 
-Single-file Python CLI at `cli/sbp-skills` (stdlib only, Python 3.11+). Content lives in `baseline/`, `packs/`, `skills/`. Tests import the CLI via importlib in `tests/conftest.py`.
+Content only — no code. `baseline/`, `packs/`, `skills/`. Skills install via `npx skills` (skills.sh); plugin groups in `.claude-plugin/marketplace.json`. Always set `DISABLE_TELEMETRY=1` when running `npx skills`.
 
 ## Git workflow
 
@@ -27,8 +24,8 @@ Single-file Python CLI at `cli/sbp-skills` (stdlib only, Python 3.11+). Content 
 
 ## Key conventions
 
-- CLI must use only Python standard library — no pip dependencies
+- No custom scripts or code — use `npx skills` for install/update
 - Pack AGENTS.md fragments must be under 300 words
-- Pack AGENTS.md files are plain markdown, concatenated on init/update
+- Pack AGENTS.md files are plain markdown, appended to a project's AGENTS.md by hand
 - Imperative voice in all agent-facing content
 - SKILL.md files follow the agentskills.io spec (YAML frontmatter + markdown body)

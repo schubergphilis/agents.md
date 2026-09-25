@@ -62,18 +62,18 @@ Review the code specifically for security concerns. This is not a general code q
 
 ## OWASP Top 10 cross-check
 
-After the detailed review above, verify coverage of the current OWASP Top 10:
+After the detailed review above, verify coverage of the [OWASP Top 10:2025](https://owasp.org/Top10/2025/):
 
-1. **Broken access control** — covered in auth section above.
-2. **Cryptographic failures** — covered in cryptography section above.
-3. **Injection** — covered in input validation above.
-4. **Insecure design** — are there architectural security flaws? Missing trust boundaries? Security decisions based on client-side logic?
-5. **Security misconfiguration** — are default credentials, unnecessary features, or overly permissive configs present?
-6. **Vulnerable and outdated components** — covered in dependencies above.
-7. **Identification and authentication failures** — covered in auth section above.
-8. **Software and data integrity failures** — are CI/CD pipelines protected? Are software updates verified? Is there protection against unsigned code?
-9. **Security logging and monitoring failures** — covered in logging section above.
-10. **Server-side request forgery** — covered in input validation above.
+1. **Broken access control** (includes SSRF) — covered in auth and input validation sections above.
+2. **Security misconfiguration** — are default credentials, unnecessary features, or overly permissive configs present?
+3. **Software supply chain failures** — covered in dependencies above. Also check that CI/CD actions and base images are pinned and builds are reproducible.
+4. **Cryptographic failures** — covered in cryptography section above.
+5. **Injection** — covered in input validation above.
+6. **Insecure design** — are there architectural security flaws? Missing trust boundaries? Security decisions based on client-side logic?
+7. **Authentication failures** — covered in auth section above.
+8. **Software or data integrity failures** — are software updates verified? Is there protection against unsigned code or untrusted deserialization?
+9. **Security logging and alerting failures** — covered in logging section above. Check that security events actually alert someone.
+10. **Mishandling of exceptional conditions** — do errors fail closed? Do exceptions leak stack traces or skip authorization checks? Are resource limits enforced under failure?
 
 ## Output: Security findings
 

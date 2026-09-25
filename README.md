@@ -15,25 +15,23 @@ Works with **Claude Code**, **GitHub Copilot**, and **OpenCode**. Compatible wit
 
 ## Getting started
 
-### Option A: One-liner install
+### Option A: `npx skills` (recommended)
 
-> **Security note:** Piping directly to `bash` executes remote code without review. Download first, inspect, then run.
-
-```bash
-curl -sSL https://raw.githubusercontent.com/schubergphilis/agents.md/main/install.sh -o /tmp/sbp-install.sh \
-  && cat /tmp/sbp-install.sh \
-  && printf '\nInstall sbp-skills? [y/N] ' \
-  && read -r yn \
-  && [[ $yn =~ ^[yY]$ ]] && bash /tmp/sbp-install.sh || echo "Aborted."
-```
-
-Then in any project:
+Install skills with the [skills.sh](https://skills.sh) CLI. Nothing to clone, no custom installer. Set `DISABLE_TELEMETRY=1` so installs are not reported to skills.sh.
 
 ```bash
-sbp-skills init
+# Pick skills interactively
+DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md
+
+# Or install specific skills globally for Claude Code
+DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md -g -a claude-code \
+  --skill sbp-architecture-review sbp-deploy-checklist
+
+# Keep them current
+DISABLE_TELEMETRY=1 npx skills update
 ```
 
-Done. Your AI agent now thinks mission-critical. It auto-detects your stack and activates the right conventions.
+Then add the baseline and the packs for your stack by hand (Option B, steps 1 and 2). `npx skills` handles skills only.
 
 ### Option B: Manual setup (no tool needed)
 
@@ -63,7 +61,7 @@ cat packs/python/AGENTS.md >> your-project/AGENTS.md
 cat packs/supply-chain/AGENTS.md >> your-project/AGENTS.md
 ```
 
-**3. Add skills** (copy to your user-level skills directory):
+**3. Add skills** (or use `npx skills add`, see Option A):
 
 ```bash
 # Copy any skill you want
@@ -71,7 +69,7 @@ cp -r skills/sbp-threat-model ~/.claude/skills/
 cp -r skills/sbp-deploy-checklist ~/.claude/skills/
 ```
 
-That's it. No tool required. The product is the content, not the CLI.
+That's it. No tool required. The product is the content.
 
 ### Option C: Claude Code plugin marketplace
 
@@ -102,7 +100,7 @@ sbp-skills follows the [agentskills.io](https://agentskills.io) standard. You ca
 
 ```bash
 # skills.sh example
-npx skills add vercel-labs/agent-skills
+DISABLE_TELEMETRY=1 npx skills add vercel-labs/agent-skills
 
 # Your own skill — just a folder with a SKILL.md
 mkdir -p ~/.claude/skills/my-custom-skill
@@ -143,9 +141,9 @@ Slash commands you can use in any conversation:
 
 ### Domain packs — conventions for your stack
 
-Packs activate automatically based on your project's files. They encode *how SBP builds mission-critical systems with this technology* — not generic best practices.
+Append the packs that match your project's files to its `AGENTS.md`. They encode *how SBP builds mission-critical systems with this technology* — not generic best practices.
 
-| Pack | Auto-detected by | What it covers |
+| Pack | Use when the repo has | What it covers |
 |------|-----------------|----------------|
 | **python** | `pyproject.toml`, `setup.py`, `requirements.txt` | uv, ruff, pyright, pytest — auditable, testable Python for production |
 | **terraform** | `*.tf`, `terraform.tf`, `versions.tf` | Module layout, version ranges, `optional(…)`, curated outputs, native `terraform test` |
@@ -206,8 +204,7 @@ Skills load on demand — they're not in context unless you invoke them. All SBP
 Enable a skill:
 
 ```bash
-# With the CLI
-sbp-skills enable sbp-threat-model
+DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill sbp-threat-model
 
 # Or manually — just copy the folder
 cp -r skills/sbp-threat-model ~/.claude/skills/
@@ -224,7 +221,7 @@ Three-layer coverage for anything Terraform at Schuberg Philis — a daily-conte
 ```
 ┌───────────────────────────────────────────────────────────────┐
 │  packs/terraform/    always-on context (AGENTS.md, CLAUDE.md) │
-│                      → activated when any *.tf is in the repo │
+│                      → append when the repo has *.tf files   │
 └───────────────────────────────────────────────────────────────┘
 ┌───────────────────────────────────────────────────────────────┐
 │  skills/terraform/     generic Terraform / OpenTofu baseline  │
@@ -253,15 +250,14 @@ Three-layer coverage for anything Terraform at Schuberg Philis — a daily-conte
 
 ```bash
 # Inside a repo with *.tf files
-sbp-skills init       # → terraform pack auto-activates, AGENTS.md updated
-sbp-skills enable terraform   # optional: pull in the deep reference skill
+cat /path/to/agents.md/packs/terraform/AGENTS.md >> AGENTS.md
+DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill terraform   # optional: deep reference skill
 ```
 
 **Authoring or reviewing an MCAF module:**
 
 ```bash
-sbp-skills enable terraform
-sbp-skills enable mcaf-module
+DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill terraform mcaf-module
 # Now the agent knows the generic rules AND the MCAF-specific overlay,
 # with GUIDE.md bundled for citation.
 ```
@@ -271,7 +267,7 @@ Then in the agent: "create a new `terraform-aws-mcaf-<thing>` module" or "review
 **Running a qualitative MCAF review (single repo or many):**
 
 ```bash
-sbp-skills enable review-mcaf
+DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill review-mcaf
 ```
 
 Then in the agent: `review this MCAF module` (current dir), or `review all MCAF modules in ./repos` (dispatches subagents and stitches a single report).
@@ -285,55 +281,13 @@ Then in the agent: `review this MCAF module` (current dir), or `review all MCAF 
 
 ### Keeping content current
 
-The Terraform + MCAF skills are developed in a separate repo (`mcaf-review`) while under active iteration — the corpus analysis, `GUIDE.md`, and the skills themselves live there. A one-command sync pulls the latest into this repo:
-
-```bash
-# Default source: ~/git/schuberg/mcaf-review
-scripts/sync-terraform-skills.sh
-
-# Custom source path
-MCAF_REVIEW_DIR=/path/to/mcaf-review scripts/sync-terraform-skills.sh
-
-# Dry-run — show drift without writing
-scripts/sync-terraform-skills.sh --check
-```
-
-The script is idempotent. It copies the three skills + `GUIDE.md` and rewrites a handful of `GUIDE.md` path references in `review-mcaf`/`mcaf-module` so cross-skill links resolve once they're symlinked as siblings under `~/.claude/skills/`. See [`scripts/README.md`](scripts/README.md) for details.
-
-**Source-of-truth rule:**
-
-- Generic Terraform + MCAF content (skills + `GUIDE.md`) → edit in `mcaf-review`, run the sync script.
-- The `terraform` *pack* (AGENTS.md / CLAUDE.md / manifest) → edit directly in this repo; not synced from anywhere.
-
-Validate after any sync or manual edit:
-
-```bash
-python3 cli/sbp-skills validate packs/terraform skills/terraform skills/mcaf-module skills/review-mcaf
-```
+The Terraform + MCAF skills, including `GUIDE.md`, are edited directly in this repo. Update them with `npx skills update`.
 
 ---
 
-## CLI reference
-
-If you're using the CLI (optional), these are the commands:
-
-| Command | What it does |
-|---------|-------------|
-| `sbp-skills init` | Detect tools and stack, render AGENTS.md + commands, link default skills |
-| `sbp-skills update` | Pull latest, re-detect, re-render, report what changed |
-| `sbp-skills list` | Show available packs, skills, and commands with status |
-| `sbp-skills add <pack>` | Add a domain pack explicitly |
-| `sbp-skills remove <pack>` | Remove a pack (won't be auto-detected again) |
-| `sbp-skills enable <skill>` | Enable a skill for this project (or `--global`) |
-| `sbp-skills disable <skill>` | Disable a skill |
-| `sbp-skills doctor` | Health check — Python, git, AI tools, repo status |
-| `sbp-skills validate <path>` | Validate a pack or skill |
-| `sbp-skills dev --pack <name>` | Scaffold a new domain pack |
-| `sbp-skills dev --skill <name>` | Scaffold a new skill |
-
 ### Adding your own content
 
-After `sbp-skills init`, your project has an `AGENTS.md`. Everything above the `---` separator is managed by sbp-skills (updated when you run `sbp-skills update`). Add your team's own rules below:
+Your project's `AGENTS.md` is the baseline plus the packs you appended. Keep that part in sync with this repo, and add your team's own rules below a `---` separator:
 
 ```markdown
 ...managed baseline and pack content...
@@ -356,9 +310,9 @@ After `sbp-skills init`, your project has an `AGENTS.md`. Everything above the `
 Packs encode how SBP builds mission-critical systems with a specific technology.
 
 ```bash
-sbp-skills dev --pack my-new-pack
-# Edit packs/my-new-pack/ — fill in manifest.toml, AGENTS.md, README.md
-sbp-skills validate packs/my-new-pack
+mkdir packs/my-new-pack
+# Write packs/my-new-pack/AGENTS.md and README.md
+wc -w packs/my-new-pack/AGENTS.md   # must be under 300
 # Open a PR
 ```
 
@@ -367,16 +321,17 @@ sbp-skills validate packs/my-new-pack
 - Imperative voice: "Run X." not "You should consider running X."
 - Every instruction verifiable with a command
 - Frame for mission-critical: not "best practice" but "what protects the customer"
-- Add detection patterns to `detection.toml` for auto-activation
+- List the files that indicate the pack applies in the pack's README and in the packs table above
 
 ### Add a skill
 
 Skills are deeper workflows that engineers opt into.
 
 ```bash
-sbp-skills dev --skill sbp-my-new-skill
+DISABLE_TELEMETRY=1 npx skills init skills/sbp-my-new-skill
 # Edit skills/sbp-my-new-skill/SKILL.md
-sbp-skills validate skills/sbp-my-new-skill
+DISABLE_TELEMETRY=1 npx skills add ./ --list   # confirm it's discovered
+# Add it to a plugin group in .claude-plugin/marketplace.json
 # Open a PR
 ```
 
@@ -397,8 +352,7 @@ Just write a markdown file and place it in `baseline/commands/` (for everyone) o
 
 ## Requirements
 
-- Python 3.11+ (for the CLI; manual setup needs nothing)
-- Git
+- Node.js (for `npx skills`; manual setup needs nothing)
 - An AI coding tool: Claude Code, GitHub Copilot, or OpenCode
 
 ## Philosophy

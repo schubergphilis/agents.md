@@ -12,7 +12,7 @@ Do these in order. Each catches different classes of issues and costs more than 
 | 1. Format | `terraform fmt -check -recursive` | free | formatting drift |
 | 2. Lint | `tflint` | free | provider-specific mistakes, naming |
 | 3. Static validation | `terraform validate` | free | syntax, type mismatches |
-| 4. Security scan | `checkov` / `tfsec` / `trivy` | free | insecure defaults |
+| 4. Security scan | `checkov` / `trivy` | free | insecure defaults |
 | 5. Plan test | `terraform plan` on every example | free | missing inputs, graph errors |
 | 6. Native test | `terraform test` with `mock_provider` | free | derived logic, validation branches |
 | 7. Apply test | Terratest, `terraform apply` in sandbox | cost | real infrastructure integration |

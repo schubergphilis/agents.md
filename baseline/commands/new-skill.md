@@ -1,4 +1,4 @@
-Scaffold a new skill for sbp-skills.
+Scaffold a new skill for this repo.
 
 ## Usage
 
@@ -12,14 +12,15 @@ Provide the skill name. All SBP skills use the `sbp-` prefix so they are easy to
 
 ## What to do
 
-1. Run `sbp-skills dev --skill <name>` to create the scaffold.
+1. Run `DISABLE_TELEMETRY=1 npx skills init skills/<name>` to create the scaffold.
 2. Edit `skills/<name>/SKILL.md`:
    - **name** — must match directory name
    - **description** — what this skill does and when to use it (50-1024 chars). Be specific so AI tools know when to activate it.
    - **metadata.domain** — what area (platform, security, data-ai, cross-cutting)
    - **metadata.lifecycle** — when it's used (plan, build, run, cross-cutting)
    - **body** — detailed instructions for the agent. Write as if briefing a smart colleague.
-3. Validate: `sbp-skills validate skills/<name>`
+3. Validate: run `DISABLE_TELEMETRY=1 npx skills add ./ --list` and confirm the skill is listed.
+4. Add the skill to a plugin group in `.claude-plugin/marketplace.json`.
 
 ## Skill writing tips
 

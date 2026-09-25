@@ -15,6 +15,6 @@ For contributors: `/new-pack` and `/new-skill` scaffold new content.
 
 ## Skills
 
-Default skills (always linked): `sbp-architecture-review`, `sbp-deploy-checklist`.
+Recommended skills: `sbp-architecture-review`, `sbp-deploy-checklist`.
 
-Run `sbp-skills list` to see all available skills. Engineers enable more with `sbp-skills enable <name>` or by copying from `skills/` to `~/.claude/skills/`.
+Run `DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --list` to see all available skills. Install more with `DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill <name>`.

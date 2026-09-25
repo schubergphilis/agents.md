@@ -11,7 +11,7 @@ Mission-critical Terraform/OpenTofu conventions for Schuberg Philis projects.
 - **Testing** — native `terraform test` with `mock_provider`
 - **Security** — checkov in pre-commit + CI, no plaintext secret defaults
 
-## Auto-detected by
+## Applies when the repo has
 
 - `*.tf`
 - `terraform.tf`
@@ -19,7 +19,7 @@ Mission-critical Terraform/OpenTofu conventions for Schuberg Philis projects.
 
 ## Related skills
 
-Enable with `sbp-skills enable <skill>`:
+Install with `DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill <skill>`:
 
 - `terraform` — generic Terraform/OpenTofu reference (with `references/` — module patterns, code patterns, testing, CI/CD, security, quick reference)
 - `mcaf-module` — Schuberg Philis MCAF-specific rules (bundles the `GUIDE.md` way-of-working)

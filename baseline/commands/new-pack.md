@@ -1,4 +1,4 @@
-Scaffold a new domain pack for sbp-skills.
+Scaffold a new domain pack for this repo.
 
 ## Usage
 
@@ -12,14 +12,12 @@ Provide the pack name (lowercase-with-hyphens):
 
 ## What to do
 
-1. Run `sbp-skills dev --pack <name>` to create the scaffold.
-2. Fill in the generated files:
-   - **manifest.toml** — set description (min 50 chars), detection file patterns, and targets
+1. Create `packs/<name>/`.
+2. Write the files:
    - **AGENTS.md** — write imperative, verifiable conventions. Under 300 words. Frame for mission-critical: not "best practice" but "what protects the customer"
-   - **README.md** — explain what the pack does, what it auto-detects, and why it matters
-3. Add detection rules to `detection.toml` if auto-detection is desired.
-4. Validate: `sbp-skills validate packs/<name>`
-5. Test: run `sbp-skills init` in a project that matches the detection pattern and verify the AGENTS.md content appears.
+   - **README.md** — explain what the pack does, which project files indicate it applies, and why it matters
+3. Validate: `wc -w packs/<name>/AGENTS.md` reports under 300 words.
+4. Add the pack to the packs table in `README.md`.
 
 ## Pack writing rules
 

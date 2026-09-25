@@ -4,7 +4,7 @@ Things to build next. Roughly prioritized — top items have the most impact.
 
 ## Domain packs to create
 
-These have detection rules ready (commented out in `detection.toml`). Each needs a `manifest.toml`, `AGENTS.md`, and `README.md` under `packs/`.
+Each needs an `AGENTS.md` and `README.md` under `packs/`.
 
 - **terraform** — mission-critical infrastructure: state management, plan-before-apply, module structure, rollback strategies, drift detection. Auto-detected by `*.tf`.
 - **kubernetes** — production-grade k8s: resource limits, health probes, PDB, RBAC, network policies, rollout strategies. Auto-detected by `k8s/*.yaml`, `helm/Chart.yaml`.
@@ -35,25 +35,15 @@ Other packs to consider:
 - **knowledge-transfer** — document decisions and context for handover between teams or during offboarding
 - **onboarding-guide** — generate a project-specific onboarding document from the codebase for new joiners
 
-## CLI improvements
-
-- **Remote repo support** — `sbp-skills init` should `git clone` from a configured remote URL, not just use local paths. Needed for real deployment.
-- **`sbp-skills browse`** — interactive picker showing available packs/skills with descriptions. Simple numbered list, not TUI.
-- **Copilot rendering** — write to `.github/copilot-instructions.md` alongside AGENTS.md for GitHub Copilot users.
-- **OpenCode rendering** — verify OpenCode reads AGENTS.md and document any tool-specific setup.
-- **`sbp-skills status`** — show what's installed, what's outdated, what new content is available since last update.
-- **Windows support** — test install.ps1, verify paths work on Windows. Python is cross-platform but paths and symlinks need testing.
-
 ## Content quality
 
-- **Test with real projects** — run `sbp-skills init` on actual SBP projects and evaluate whether the agent's behavior noticeably improves. Collect feedback from engineers.
+- **Test with real projects** — apply the baseline and packs to actual SBP projects and evaluate whether the agent's behavior noticeably improves. Collect feedback from engineers.
 - **Baseline word count discipline** — currently 297 words. As we add more, resist the urge to grow it. The baseline should stay tight. If something needs depth, make it a skill.
 - **Pack word count audit** — keep each pack under 300 words. If conventions need more detail, split into pack (summary) + skill (depth).
 - **Command effectiveness** — test each command in real conversations. Does `/review` actually catch things? Does `/challenge` ask useful questions? Iterate on the prompts based on real use.
 
 ## Distribution
 
-- **Host the repo** — push to GitHub/GitLab so `install.sh` and `sbp-skills update` work for real.
 - **Versioning** — tag releases so teams can pin to a version and update deliberately.
 - **Changelog** — track what changes between versions so teams know what they're getting on update.
 
