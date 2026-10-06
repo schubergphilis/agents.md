@@ -112,7 +112,7 @@ You get a prioritised list of risks before any code changes. Each finding has a 
 First, install the skill (or use the plugin install — same result):
 
 ```bash
-DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill sbp-secure-code-review
+DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md --skill sbp-secure-code-review
 ```
 
 Then in Claude Code:
@@ -283,10 +283,10 @@ The output is a structured report with action items, owners, and deadlines, read
 
 ## What's next
 
-Run `DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --list` to browse everything available, or look through the `skills/` directory in this repo. If you find a workflow that is not covered, scaffold a new skill with:
+Run `DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md --list` to browse everything available, or look through the `skills/` directory in this repo. If you find a workflow that is not covered, scaffold a new skill with:
 
 ```bash
-DISABLE_TELEMETRY=1 npx skills init skills/sbp-your-skill-name
+DISABLE_TELEMETRY=1 npx skills@1.7.0 init skills/sbp-your-skill-name
 ```
 
 Then open a PR.

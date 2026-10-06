@@ -17,4 +17,4 @@ For contributors: `/new-pack` and `/new-skill` scaffold new content.
 
 Recommended skills: `sbp-architecture-review`, `sbp-deploy-checklist`.
 
-Run `DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --list` to see all available skills. Install more with `DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill <name>`.
+Run `DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md --list` to see all available skills. Install more with `DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md --skill <name>`.

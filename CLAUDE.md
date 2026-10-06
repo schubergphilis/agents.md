@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # All skills must be discovered (count must match `ls skills | wc -l`)
-DISABLE_TELEMETRY=1 NO_COLOR=1 npx -y skills add ./ --list
+DISABLE_TELEMETRY=1 NO_COLOR=1 npx -y skills@1.7.0 add ./ --list
 
 # Pack fragments must stay under 300 words
 wc -w packs/*/AGENTS.md
@@ -25,6 +25,7 @@ Content only — no code. `baseline/`, `packs/`, `skills/`. Skills install via `
 ## Key conventions
 
 - No custom scripts or code — use `npx skills` for install/update
+- Pin `npx skills@<version>` in every command; keep it in sync with `.github/workflows/ci.yaml`
 - Pack AGENTS.md fragments must be under 300 words
 - Pack AGENTS.md files are plain markdown, appended to a project's AGENTS.md by hand
 - Imperative voice in all agent-facing content
