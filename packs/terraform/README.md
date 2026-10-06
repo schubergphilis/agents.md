@@ -19,7 +19,7 @@ Mission-critical Terraform/OpenTofu conventions for Schuberg Philis projects.
 
 ## Related skills
 
-Install with `DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill <skill>`:
+Install with `DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md --skill <skill>`:
 
 - `terraform` — generic Terraform/OpenTofu reference (with `references/` — module patterns, code patterns, testing, CI/CD, security, quick reference)
 - `mcaf-module` — Schuberg Philis MCAF-specific rules (bundles the `GUIDE.md` way-of-working)

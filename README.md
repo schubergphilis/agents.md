@@ -21,14 +21,14 @@ Install skills with the [skills.sh](https://skills.sh) CLI. Nothing to clone, no
 
 ```bash
 # Pick skills interactively
-DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md
+DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md
 
 # Or install specific skills globally for Claude Code
-DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md -g -a claude-code \
+DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md -g -a claude-code \
   --skill sbp-architecture-review sbp-deploy-checklist
 
 # Keep them current
-DISABLE_TELEMETRY=1 npx skills update
+DISABLE_TELEMETRY=1 npx skills@1.7.0 update
 ```
 
 Then add the baseline and the packs for your stack by hand (Option B, steps 1 and 2). `npx skills` handles skills only.
@@ -61,7 +61,7 @@ cat packs/python/AGENTS.md >> your-project/AGENTS.md
 cat packs/supply-chain/AGENTS.md >> your-project/AGENTS.md
 ```
 
-**3. Add skills** (or use `npx skills add`, see Option A):
+**3. Add skills** (or use `npx skills@1.7.0 add`, see Option A):
 
 ```bash
 # Copy any skill you want
@@ -100,7 +100,7 @@ sbp-skills follows the [agentskills.io](https://agentskills.io) standard. You ca
 
 ```bash
 # skills.sh example
-DISABLE_TELEMETRY=1 npx skills add vercel-labs/agent-skills
+DISABLE_TELEMETRY=1 npx skills@1.7.0 add vercel-labs/agent-skills
 
 # Your own skill — just a folder with a SKILL.md
 mkdir -p ~/.claude/skills/my-custom-skill
@@ -204,7 +204,7 @@ Skills load on demand — they're not in context unless you invoke them. All SBP
 Enable a skill:
 
 ```bash
-DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill sbp-threat-model
+DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md --skill sbp-threat-model
 
 # Or manually — just copy the folder
 cp -r skills/sbp-threat-model ~/.claude/skills/
@@ -251,13 +251,13 @@ Three-layer coverage for anything Terraform at Schuberg Philis — a daily-conte
 ```bash
 # Inside a repo with *.tf files
 cat /path/to/agents.md/packs/terraform/AGENTS.md >> AGENTS.md
-DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill terraform   # optional: deep reference skill
+DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md --skill terraform   # optional: deep reference skill
 ```
 
 **Authoring or reviewing an MCAF module:**
 
 ```bash
-DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill terraform mcaf-module
+DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md --skill terraform mcaf-module
 # Now the agent knows the generic rules AND the MCAF-specific overlay,
 # with GUIDE.md bundled for citation.
 ```
@@ -267,7 +267,7 @@ Then in the agent: "create a new `terraform-aws-mcaf-<thing>` module" or "review
 **Running a qualitative MCAF review (single repo or many):**
 
 ```bash
-DISABLE_TELEMETRY=1 npx skills add schubergphilis/agents.md --skill review-mcaf
+DISABLE_TELEMETRY=1 npx skills@1.7.0 add schubergphilis/agents.md --skill review-mcaf
 ```
 
 Then in the agent: `review this MCAF module` (current dir), or `review all MCAF modules in ./repos` (dispatches subagents and stitches a single report).
@@ -281,7 +281,7 @@ Then in the agent: `review this MCAF module` (current dir), or `review all MCAF 
 
 ### Keeping content current
 
-The Terraform + MCAF skills, including `GUIDE.md`, are edited directly in this repo. Update them with `npx skills update`.
+The Terraform + MCAF skills, including `GUIDE.md`, are edited directly in this repo. Update them with `npx skills@1.7.0 update`.
 
 ---
 
@@ -328,9 +328,9 @@ wc -w packs/my-new-pack/AGENTS.md   # must be under 300
 Skills are deeper workflows that engineers opt into.
 
 ```bash
-DISABLE_TELEMETRY=1 npx skills init skills/sbp-my-new-skill
+DISABLE_TELEMETRY=1 npx skills@1.7.0 init skills/sbp-my-new-skill
 # Edit skills/sbp-my-new-skill/SKILL.md
-DISABLE_TELEMETRY=1 npx skills add ./ --list   # confirm it's discovered
+DISABLE_TELEMETRY=1 npx skills@1.7.0 add ./ --list   # confirm it's discovered
 # Add it to a plugin group in .claude-plugin/marketplace.json
 # Open a PR
 ```
@@ -352,7 +352,7 @@ Just write a markdown file and place it in `baseline/commands/` (for everyone) o
 
 ## Requirements
 
-- Node.js (for `npx skills`; manual setup needs nothing)
+- Node.js 22.20+ (for `npx skills`; manual setup needs nothing)
 - An AI coding tool: Claude Code, GitHub Copilot, or OpenCode
 
 ## Philosophy
